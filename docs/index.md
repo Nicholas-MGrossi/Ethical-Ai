@@ -1,6 +1,10 @@
 ---
-title: Universal Standards for LLM-Based Assistants
-description: Open ethical, legal, and operational framework for building responsible AI assistants. COPPA-compliant, GDPR-aligned, human-centered.
+title: Universal Standards for LLM-Based Assistants | Open Ethical AI Framework v1.0
+description: Open, provider-agnostic standards for ethical, safe, and compliant LLM-based AI assistants. COPPA-compliant, GDPR-aligned, human-centered framework for responsible AI deployment. Free public domain specification.
+keywords: LLM ethics, AI assistant standards, responsible AI, ethical AI, LLM compliance, AI safety, COPPA compliance, GDPR AI, AI regulations, universal AI standards, large language model, AI governance, child safety AI, AI transparency, non-sentient AI, human-centered AI
+author: Open Community
+repository: Nicholas-MGrossi/Ethical-Ai
+theme: jekyll-theme-cayman
 ---
 
 # Universal Standards for LLM-Based Assistants

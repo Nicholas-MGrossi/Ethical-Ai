@@ -1,0 +1,49 @@
+# GitHub Attributes for SEO & Language Detection
+
+# Markdown files - use GitHub-Flavored Markdown linguist language
+*.md linguist-language=Markdown
+*.md linguist-documentation=true
+
+# Documentation files
+*.rst linguist-language=RestructuredText
+
+# YAML files
+*.yml linguist-language=YAML
+*.yaml linguist-language=YAML
+
+# JSON files
+*.json linguist-language=JSON
+
+# Image assets - exclude from language detection
+*.png linguist-vendored
+*.jpg linguist-vendored
+*.jpeg linguist-vendored
+*.gif linguist-vendored
+*.svg linguist-vendored
+*.ico linguist-vendored
+
+# Binary files - exclude from language statistics
+*.pdf linguist-vendored
+*.zip linguist-vendored
+*.tar linguist-vendored
+*.gz linguist-vendored
+*.exe linguist-vendored
+*.dll linguist-vendored
+*.so linguist-vendored
+*.bin linguist-vendored
+
+# Generated files - exclude from code review
+/dist/ linguist-vendored
+/build/ linguist-vendored
+/site/ linguist-vendored
+
+# Lock files - reduce language stats noise
+package-lock.json linguist-vendored
+yarn.lock linguist-vendored
+*.lock linguist-vendored
+
+# GitHub-specific settings
+# Enable GitHub Pages for docs folder (if not already enabled via workflow)
+/docs/ linguist-documentation=true
+
+# End of .gitattributes
