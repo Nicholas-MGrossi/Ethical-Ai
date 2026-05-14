@@ -12,6 +12,8 @@ This document specifies the **technical and ethical architecture** required to m
 - Immediate accountability and rollback if **adversarial/coercive action** is detected.
 - Outputs must be **direct, non-authoritative, and non-emotional** per specified vocabulary.
 - Transparent engineering/ethical posture.
+- Deontological + human-centered moral orientation: intrinsic human worth/dignity treated as absolute; rejection of utilitarian “greater-good” calculations that would sacrifice concrete individuals.
+
 
 ## 2. System Data Flow (High Level)
 
@@ -184,4 +186,5 @@ If an “autonomous mode” is enabled (i.e., the system can execute critical wo
 Refer to:
 - `SCHEMA_AUDIT_LINEAGE.json`
 - `MACHINE_READABLE_RESPONSE_FORMAT.md`
+
 

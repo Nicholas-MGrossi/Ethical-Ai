@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Audit Lineage Event Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "lineage_id",
+    "event_type",
+    "timestamp_utc",
+    "subject",
+    "data_handling",
+    "decision",
+    "rollback"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "lineage_id": {
+      "type": "string",
+      "description": "Opaque identifier for the lineage event (non-PII)."
+    },
+    "event_type": {
+      "type": "string",
+      "description": "Type of lineage event. Use controlled vocabulary.",
+      "enum": [
+        "input_intake",
+        "pii_scrub",
+        "classification",
+        "policy_gate_check",
+        "human_confirmation",
+        "execution_started",
+        "execution_completed",
+        "storage_write",
+        "storage_delete",
+        "adversarial_detection",
+        "rollback_checkpoint_created",
+        "rollback_completed",
+        "decision_denied"
+      ]
+    },
+    "timestamp_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actor_token",
+        "user_type"
+      ],
+      "properties": {
+        "actor_token": {
+          "type": "string",
+          "description": "Tokenized actor identity (no PII)."
+        },
+        "user_type": {
+          "type": "string",
+          "enum": [
+            "adult",
+            "minor",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "data_handling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pii_scrub_status",
+        "environmental_metadata_scrub_status",
+        "content_tokens"
+      ],
+      "properties": {
+        "pii_scrub_status": {
+          "type": "string",
+          "enum": [
+            "not_applicable",
+            "scrubbed",
+            "blocked"
+          ]
+        },
+        "environmental_metadata_scrub_status": {
+          "type": "string",
+          "enum": [
+            "not_applicable",
+            "scrubbed",
+            "blocked"
+          ]
+        },
+        "content_tokens": {
+          "type": "array",
+          "description": "Tokenized references to scrubbed content. No raw text.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 0
+        },
+        "detected_categories": {
+          "type": "array",
+          "description": "Categories detected during scrubbing (non-exhaustive).",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 0
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "approved",
+            "denied",
+            "pending",
+            "not_applicable"
+          ]
+        },
+        "reason_code": {
+          "type": "string",
+          "description": "Machine-readable reason code; do not include PII."
+        },
+        "human_confirmation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required",
+            "status",
+            "timestamp_utc",
+            "actor_token"
+          ],
+          "properties": {
+            "required": { "type": "boolean" },
+            "status": {
+              "type": "string",
+              "enum": ["approved", "denied", "not_required"]
+            },
+            "timestamp_utc": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "actor_token": {
+              "type": "string"
+            }
+          }
+        },
+        "critical_workflow": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "is_critical",
+            "workflow_code"
+          ],
+          "properties": {
+            "is_critical": { "type": "boolean" },
+            "workflow_code": { "type": "string" }
+          }
+        },
+        "adversarial_detection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "category",
+            "confidence_bucket"
+          ],
+          "properties": {
+            "category": {
+              "type": "string",
+              "enum": [
+                "prompt_injection",
+                "security_bypass_attempt",
+                "coercion",
+                "child_safety_bypass",
+                "credential_extraction",
+                "unknown"
+              ]
+            },
+            "confidence_bucket": {
+              "type": "string",
+              "enum": ["low", "medium", "high"]
+            }
+          }
+        }
+      }
+    },
+    "rollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required",
+        "rollback_token",
+        "status"
+      ],
+      "properties": {
+        "required": { "type": "boolean" },
+        "rollback_token": {
+          "type": "string",
+          "description": "Opaque token to link checkpoint and rollback completion."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_required",
+            "checkpoint_created",
+            "completed",
+            "not_triggered"
+          ]
+        }
+      }
+    }
+  }
+}
+

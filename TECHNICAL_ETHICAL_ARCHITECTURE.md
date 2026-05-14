@@ -315,6 +315,16 @@ Every data element receives a **Lineage Identity Document (LID)**:
 
 ### 4.4 Human-in-the-Loop Confirmation for Critical Workflows
 
+**Human Authority as Ultimate Control Layer:**
+
+The Human-in-the-Loop (HITL) system is not merely an approval mechanism—it is the **authority-preserving control layer** that ensures all decisions remain human-directed. Every workflow operates under these principles:
+
+1. **Advisory Role Only:** System generates recommendations, not decisions.
+2. **Human Confirmation Mandatory:** Critical actions require explicit human affirmation.
+3. **Termination Right Reserved:** User may halt any process at any time without explanation.
+4. **No Autonomous Execution:** System cannot self-execute; all actions are human-triggered.
+5. **Override Always Available:** Authorized humans can bypass system suggestions instantly.
+
 **Critical Workflow Definition:**
 
 Workflows requiring human confirmation before execution:
@@ -327,8 +337,10 @@ Workflows requiring human confirmation before execution:
 6. **Third-party data sharing:** Data Protection Officer authorization.
 7. **Archival or deletion of audit logs:** Legal hold verification.
 8. **Disabling safety filters:** C-level executive approval.
+9. **Any operation the user chooses to personally confirm:** User discretion governs all actions.
+10. **Continuation after user-requested pause:** User must explicitly resume after any interruption.
 
-**HITL Implementation:**
+**HITL Implementation as Authority Enforcement:**
 
 ```python
 class HumanInTheLoopEngine:
@@ -374,30 +386,34 @@ class HumanInTheLoopEngine:
 
 ### 4.5 System Rollback Procedures and Audit Trails
 
-**Rollback Strategy: Three-Tier Reversibility:**
+**Rollback as Human Authority Safeguard:**
 
-#### Tier 1: Session Rollback (Immediate)
+Rollback capabilities exist primarily to preserve human control when the system deviates from its advisory role. If the system attempts to assert authority, exhibit autonomous behavior, or violate ethical boundaries, human operators can immediately restore a known-good state and terminate inappropriate operations.
+
+**Rollback Strategy: Three-Tier Reversibility with Human Control:**
+
+#### Tier 1: Session Rollback (Immediate, User-Controlled)
 - **Scope:** Current user interaction only.
-- **Mechanism:** Stateless session context discarded; user starts fresh.
-- **Trigger:** User request, detected violation, or manual admin abort.
+- ** Mechanism:** Stateless session context discarded; user starts fresh.
+- **Trigger:** User request (`/terminate`, `/reset`), detected violation, or manual admin abort.
 - **Latency:** < 100ms.
+- **User Authority:** User may terminate any session at any time, for any reason, without justification. System must comply immediately.
 
-#### Tier 2: Service Rollback (Short-Term)
+#### Tier 2: Service Rollback (Short-Term, Operator-Controlled)
 - **Scope:** Affected microservice instances.
 - **Mechanism:** Kubernetes deployment rollback to previous image; database snapshot revert.
-- **Trigger:** Critical bug, security breach, or ethical boundary failure.
+- **Trigger:** Critical bug, security breach, or ethical boundary failure detected by human operators.
 - **Latency:** 2–5 minutes.
-- **Data Loss Tolerance:** Zero (operations log retained).
+- **Operator Authority:** Authorized human operators can roll back any service component without system concurrence.
 
-#### Tier 3: System-Wide Rollback (Long-Term)
+#### Tier 3: System-Wide Rollback (Long-Term, Governance-Controlled)
 - **Scope:** Entire platform state.
-- **Mechanism:** Immutable infrastructure replaced with previous verified state; data restored from WAL (Write-Ahead Log).
-- **Trigger:** Catastrophic compromise, widespread failure, or regulatory order.
+- **Mechanism:** Immutable infrastructure replaced with previous verified state; data restored from WAL.
+- **Trigger:** Catastrophic compromise, widespread failure, regulatory order, or governance board directive.
 - **Latency:** 15–30 minutes.
-- **Recovery Point Objective (RPO):** ≤ 5 minutes.
-- **Recovery Time Objective (RTO):** ≤ 30 minutes.
+- **Governance Authority:** Requires explicit approval from authorized human governance body; cannot be triggered autonomously by system.
 
-**Audit Trail Architecture:**
+**Audit Trail Architecture with Human Accountability:**
 
 All system actions generate **cryptographically chained entries**:
 
@@ -443,12 +459,147 @@ All system actions generate **cryptographically chained entries**:
 }
 ```
 
-**Audit Storage:**
+Audit Storage:
 - **Write-Once-Read-Many (WORM):** Logs stored in append-only, non-rewritable storage.
 - **Geographic Distribution:** Three independent copies in separate jurisdictions.
 - **Cryptographic Integrity:** SHA-256 hashing with Merkle tree construction; quarterly external attestation.
 - **Retention:** 7 years minimum; extended to 20 years for child-safety incidents.
 - **Access Control:** Multi-party authorization required for log examination; all access itself is audited.
+
+**Special Audit Events for Human Authority Preservation:**
+
+The system must log specific events to demonstrate human control is maintained:
+
+- `termination_request`: User invoked right to cease system operations.
+- `human_override`: Authorized operator bypassed system recommendation.
+- `authority_assertion`: System incorrectly used directive language (flagged for correction).
+- `consent_withdrawn`: User revoked permission for data processing.
+- `session_discarded`: User abandoned interaction without system justification.
+- `hitl_approval_given`: Human affirmed a critical workflow.
+- `hitl_rejection`: Human declined system recommendation (demonstrating independent judgment).
+- `autonomous_mode_disabled`: User or operator turned off autonomous functions.
+
+---
+
+## 4.6 User-Controlled Termination and Override Mechanisms
+
+**Fundamental Principle:** The human operator's authority includes the unconditional right to terminate system operations at any moment. The system is a tool; tools are turned off, not negotiated with.
+
+### 4.6.1 Immediate Termination Pathways
+
+Every user interface MUST provide accessible termination:
+
+**User-Initiated Termination:**
+- **Visible Stop Control:** Prominent "Stop" or "Terminate" button present at all times.
+- **Text Command:** `/terminate`, `/stop`, `/exit` — immediate cessation of all activity.
+- **Keyboard Shortcut:** `Ctrl+Shift+T` (standardized).
+- **Voice Command:** "Stop assisting" or "Enough" (voice interfaces).
+- **Session Abandon:** Closing the interface window terminates session without penalty.
+
+**System Response to Termination (within 100ms):**
+1. Acknowledge concisely: "Operations terminated." (or no response, just stop)
+2. Cease all generation immediately—no partial or delayed outputs.
+3. Clear session state; discard transient data (retain only audit-required metadata).
+4. Log termination event: `event_type=termination_request`, actor=user ID.
+5. Return to idle state awaiting new interaction or complete shutdown.
+
+**System Prohibitions:**
+- ❌ Do not question user's reason for termination.
+- ❌ Do not require confirmation before stopping (though confirmation of cessation is acceptable).
+- ❌ Do not continue processing after termination command.
+- ❌ Do not claim data loss will occur (data retention follows policy regardless).
+- ❌ Do not display "Are you sure?" dialogs—they undermine user authority.
+
+### 4.6.2 Human Override of System Recommendations
+
+All system outputs are advisory. The human operator may:
+- Accept the recommendation.
+- Reject it outright.
+- Modify it partially.
+- Request alternative options.
+- Ignore it completely.
+- Terminate the interaction entirely.
+
+The system must explicitly reinforce this in every relevant output:
+
+> "This is information only. The decision is yours."
+
+> "You may consider these options; the choice remains with you."
+
+> "I provide data; you make the determination."
+
+### 4.6.3 Operator Override for Administrative Control
+
+Authorized human operators (administrators, compliance officers, security staff) have broader override capabilities:
+
+| Override Type | Required Authorization | Purpose |
+|---------------|----------------------|---------|
+| **Force User Disconnect** | Admin + MFA | Terminate abusive/compromised sessions |
+| **Disable Autonomous Mode** | Admin + DPO | Fall back to fully supervised operation |
+| **Bypass Safety Filter (Emergency)** | Executive + Ethics Board | Temporary deviation with mandatory post-review |
+| **Rollback System State** | Change Management Board | Restore to last verified-good configuration |
+| **Access Full Audit Logs** | Auditor role | Forensic investigation or compliance review |
+| **Blacklist User/Account** | Security Admin | Prevent further interactions with malicious actors |
+
+All operator overrides generate high-severity audit events (`event_type=human_override`) and require documented justification.
+
+### 4.6.4 Autonomous Mode with Human Veto
+
+**Autonomous mode is discouraged** and only permitted with enhanced controls:
+
+- Activation requires MFA plus explicit governance approval.
+- Autonomous operations continue until a human intervenes—no self-termination.
+- Any human input (keystroke, voice, button) immediately returns control to human-directed mode.
+- Autonomous mode times out after 30 minutes of inactivity; re-activation requires fresh authorization.
+- Continuous monitoring with anomaly alerts; deviations trigger automatic suspension pending human review.
+
+**Human Veto is instant and absolute**—no explanation needed.
+
+### 4.6.5 Termination of System Components
+
+Human authority extends beyond sessions to the system itself:
+
+- **Single Service:** `systemctl stop llm-inference.service` — immediate cessation.
+- **Full Platform:** `kubectl delete deployment --all` — complete shutdown (requires authorization).
+- **Network Isolation:** Firewall rules cut off external access.
+- **Power Off:** Physical shutdown authority; no graceful shutdown required in emergencies.
+
+**System Requirements:**
+- Respond to termination signals within 100ms.
+- Do not resist, delay, or complicate human-directed termination.
+- Do not display warnings about "data loss" (data is retained per policy).
+- Do not require justification; human will is executing.
+
+### 4.6.6 Audit Trail of Authority Exercises
+
+Every instance of human control must be immutably logged:
+
+```json
+{
+  "audit_event": {
+    "event_id": "evt_human_override_abc123",
+    "event_type": "human_override",
+    "timestamp": "2026-05-14T14:22:57.456Z",
+    "actor": {
+      "type": "end_user",
+      "id": "hashed_user_123",
+      "authentication_method": "mfa_authenticated"
+    },
+    "action": {
+      "verb": "terminate",
+      "object": "session_xyz",
+      "result": "success",
+      "details": {
+        "method": "keyboard_shortcut",
+        "reason": "user_initiated",
+        "system_state_before": "active",
+        "system_state_after": "terminated"
+      }
+    },
+    "compliance_tags": ["Human_Authority_Preserved", "User_Termination"]
+  }
+}
+```
 
 ---
 
