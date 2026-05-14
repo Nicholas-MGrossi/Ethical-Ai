@@ -1,0 +1,261 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Compliance Assessment Report",
+  "description": "Periodic compliance evaluation report against Universal Standards v1.0 and applicable regulatory frameworks. Used for internal governance, external audit, and regulatory disclosure.",
+  "type": "object",
+  "required": [
+    "report_id",
+    "assessment_period",
+    "system_metadata",
+    "compliance_scores",
+    "findings",
+    "attestation"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique report identifier"
+    },
+    "assessment_period": {
+      "type": "object",
+      "required": ["start_date", "end_date"],
+      "properties": {
+        "start_date": {
+          "type": "string",
+          "format": "date",
+          "description": "First day of assessment coverage"
+        },
+        "end_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Last day of assessment coverage"
+        }
+      }
+    },
+    "system_metadata": {
+      "type": "object",
+      "description": "Information about the assessed system",
+      "required": ["system_name", "version"],
+      "properties": {
+        "system_name": {
+          "type": "string",
+          "description": "Name of the LLM assistant system"
+        },
+        "version": {
+          "type": "string",
+          "description": "Software version under assessment"
+        },
+        "deployment_environment": {
+          "type": "string",
+          "enum": ["production", "staging", "development", "multiple"],
+          "default": "production"
+        },
+        "jurisdictions": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Geographic jurisdictions where system operates",
+          "examples": [["United States", "European Union"], ["California", "New York"]]
+        },
+        "service_description": {
+          "type": "string",
+          "description": "Brief description of system's purpose and user base"
+        },
+        "data_subjects_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Approximate number of individuals whose data is processed"
+        }
+      }
+    },
+    "compliance_scores": {
+      "type": "object",
+      "description": "Quantitative compliance metrics (0-100 scale)",
+      "required": [
+        "universal_standards",
+        "gdpr",
+        "ccpa",
+        "coppa",
+        "security_controls",
+        "data_lineage"
+      ],
+      "properties": {
+        "universal_standards": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Overall adherence to Universal Standards for LLM-Based Assistants v1.0"
+        },
+        "gdpr": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Compliance with EU General Data Protection Regulation"
+        },
+        "ccpa": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Compliance with California Consumer Privacy Act / CPRA"
+        },
+        "coppa": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Compliance with Children's Online Privacy Protection Act"
+        },
+        "security_controls": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Implementation of security best practices (SOC2, NIST CSF)"
+        },
+        "data_lineage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Completeness and integrity of data lineage tracking"
+        },
+        "bias_fairness": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Measured fairness across protected characteristics"
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "description": "Detailed list of compliance findings",
+      "items": {
+        "type": "object",
+        "required": [
+          "finding_id",
+          "category",
+          "severity",
+          "description",
+          "recommendation"
+        ],
+        "properties": {
+          "finding_id": {
+            "type": "string",
+            "description": "Unique identifier for this finding"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "privacy",
+              "security",
+              "ethics",
+              "child_safety",
+              "data_governance",
+              "access_control",
+              "audit_logging",
+              "transparency",
+              "bias",
+              "legal_compliance"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low", "informational"],
+            "description": "Risk level if left unaddressed"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the issue"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Specific remediation steps"
+          },
+          "affected_components": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "System components impacted"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["open", "in_progress", "resolved", "accepted_risk"],
+            "default": "open"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Target remediation date"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "References to supporting documentation"
+          }
+        }
+      }
+    },
+    "attestation": {
+      "type": "object",
+      "required": [
+        "attester_name",
+        "attester_role",
+        "attestation_date",
+        "declaration"
+      ],
+      "properties": {
+        "attester_name": {
+          "type": "string",
+          "description": "Full name of person attesting to compliance"
+        },
+        "attester_role": {
+          "type": "string",
+          "description": "Official capacity (e.g., 'Chief AI Ethics Officer', 'DPO')"
+        },
+        "attestation_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date when compliance is declared"
+        },
+        "declaration": {
+          "type": "string",
+          "enum": [
+            "compliant",
+            "non_compliant",
+            "partial",
+            "conditional"
+          ],
+          "description": "Overall compliance status"
+        },
+        "conditions": {
+          "type": ["string", "null"],
+          "description": "If 'conditional', list specific conditions requiring ongoing monitoring"
+        },
+        "next_assessment_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Scheduled date for next full assessment"
+        },
+        "digital_signature": {
+          "type": "string",
+          "description": "Cryptographic signature of this report (optional)"
+        }
+      }
+    },
+    "supporting_evidence": {
+      "type": "array",
+      "description": "References to documents supporting this assessment",
+      "items": {
+        "type": "object",
+        "properties": {
+          "document_type": {
+            "type": "string",
+            "examples": ["policy", "procedure", "test_result", "audit_report"]
+          },
+          "reference": {
+            "type": "string",
+            "description": "Path, URL, or identifier for the evidence"
+          },
+          "description": {"type": "string"}
+        }
+      }
+    }
+  }
+}

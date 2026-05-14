@@ -138,8 +138,8 @@ These standards synthesize research and best practices from:
 ## Contact
 
 Maintainer: Open Community Repository  
-Project: https://github.com/[your-username]/universal-llm-standards  
-Issues: https://github.com/[your-username]/universal-llm-standards/issues  
+Project: https://github.com/Nicholas-MGrossi/Ethical-Ai
+Issues: https://github.com/Nicholas-MGrossi/Ethical-Ai/issues  
 
 ---
 

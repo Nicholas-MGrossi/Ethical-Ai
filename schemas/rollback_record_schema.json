@@ -1,0 +1,257 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Rollback Record",
+  "description": "Immutable record of any system rollback operation, capturing cause, execution details, and verification results. Essential for audit, compliance, and post-incident analysis.",
+  "type": "object",
+  "required": [
+    "rollback_id",
+    "trigger_event",
+    "timestamp",
+    "initiated_by",
+    "scope",
+    "previous_state",
+    "target_state",
+    "verification_results",
+    "outcome"
+  ],
+  "properties": {
+    "rollback_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this rollback operation"
+    },
+    "trigger_event": {
+      "type": "object",
+      "description": "Event that caused rollback to be initiated",
+      "required": ["type", "description", "severity"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "adversarial_action",
+            "security_incident",
+            "system_failure",
+            "ethical_violation",
+            "manual_override",
+            "compliance_breach",
+            "data_corruption",
+            "regulatory_order"
+          ]
+        },
+        "description": {"type": "string"},
+        "severity": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"]
+        },
+        "related_event_ids": {
+          "type": "array",
+          "items": {"type": "string", "format": "uuid"},
+          "description": "Audit event IDs that triggered this rollback"
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When rollback operation was initiated (UTC)"
+    },
+    "initiated_by": {
+      "type": "object",
+      "required": ["actor_type", "authentication_method"],
+      "properties": {
+        "actor_type": {
+          "type": "string",
+          "enum": ["automated_system", "security_admin", "system_operator", "compliance_officer"]
+        },
+        "actor_id": {"type": "string", "description": "Hashed or tokenized identifier"},
+        "authentication_method": {
+          "type": "string",
+          "enum": ["mfa", "single_factor", "service_token", "ssh_key"]
+        },
+        "justification": {
+          "type": ["string", "null"],
+          "description": "Human-provided reason for manual rollbacks"
+        }
+      }
+    },
+    "rollback_scope": {
+      "type": "object",
+      "description": "Boundaries of the rollback operation",
+      "required": ["tier", "affected_components"],
+      "properties": {
+        "tier": {
+          "type": "string",
+          "enum": ["session", "service", "system", "partial"],
+          "description": "Rollback granularity level (Tier 1-3 plus partial)"
+        },
+        "affected_components": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of services, databases, or storage locations reverted"
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Components explicitly NOT rolled back (immutable logs, etc.)"
+        },
+        "estimated_impact": {
+          "type": "string",
+          "enum": ["session_only", "read_only_users", "read_write_users", "full_outage"],
+          "description": "Expected user impact during rollback"
+        }
+      }
+    },
+    "previous_state": {
+      "type": "object",
+      "description": "State from which we are rolling back (the compromised state)",
+      "required": ["state_id", "timestamp", "snapshot_type"],
+      "properties": {
+        "state_id": {"type": "string", "description": "Identifier for the previous state"},
+        "timestamp": {"type": "string", "format": "date-time"},
+        "snapshot_type": {
+          "type": "string",
+          "enum": ["kubernetes_image", "database_snapshot", "config_snapshot", "log_checkpoint"]
+        },
+        "integrity_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-fA-F0-9]{64}$",
+          "description": "Hash verifying previous state's integrity"
+        }
+      }
+    },
+    "target_state": {
+      "type": "object",
+      "description": "State to which we are rolling back (known good state)",
+      "required": ["state_id", "timestamp"],
+      "properties": {
+        "state_id": {"type": "string"},
+        "timestamp": {"type": "string", "format": "date-time"},
+        "snapshot_type": {"type": "string"},
+        "integrity_hash": {"type": "string"},
+        "verification_status": {
+          "type": "string",
+          "enum": ["verified", "unverified", "corrupted"],
+          "description": "Whether target state passed integrity checks before rollback"
+        }
+      }
+    },
+    "execution_details": {
+      "type": "object",
+      "description": "Step-by-step execution log",
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["step_number", "action", "status"],
+            "properties": {
+              "step_number": {"type": "integer"},
+              "action": {"type": "string"},
+              "status": {"type": "string", "enum": ["pending", "running", "success", "failed", "skipped"]},
+              "started_at": {"type": ["string", "null"], "format": "date-time"},
+              "completed_at": {"type": ["string", "null"], "format": "date-time"},
+              "error_message": {"type": ["string", "null"]},
+              "retry_count": {"type": "integer", "minimum": 0}
+            }
+          }
+        },
+        "overall_start": {"type": "string", "format": "date-time"},
+        "overall_end": {"type": ["string", "null"], "format": "date-time"},
+        "duration_seconds": {"type": ["integer", "null"]},
+        "aborted": {"type": "boolean", "default": false},
+        "abort_reason": {"type": ["string", "null"]}
+      }
+    },
+    "verification_results": {
+      "type": "object",
+      "description": "Post-rollback validation checks",
+      "required": ["system_operational", "data_integrity"],
+      "properties": {
+        "system_operational": {
+          "type": "boolean",
+          "description": "Whether system is serving traffic successfully"
+        },
+        "health_check_status": {
+          "type": "string",
+          "enum": ["passing", "warning", "failing", "unknown"]
+        },
+        "data_integrity": {
+          "type": "boolean",
+          "description": "Whether all data checksums match expected values"
+        },
+        "service_status": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "status": {"type": "string"},
+              "last_check": {"type": "string", "format": "date-time"},
+              "error_rate_pct": {"type": "number"}
+            }
+          },
+          "description": "Per-service health after rollback"
+        },
+        "integrity_checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "check_name": {"type": "string"},
+              "expected": {"type": "string"},
+              "actual": {"type": "string"},
+              "match": {"type": "boolean"}
+            }
+          }
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "required": ["success", "completion_status"],
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Overall rollback success (system restored to intended state)"
+        },
+        "completion_status": {
+          "type": "string",
+          "enum": ["complete", "partial", "failed", "in_progress"],
+          "description": "Operational status at record creation"
+        },
+        "rollback_duration_seconds": {"type": "integer"},
+        "data_loss_incident": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether any data was permanently lost during rollback"
+        },
+        "lessons_learned": {
+          "type": ["string", "null"],
+          "description": "Post-mortem findings (filled later)"
+        },
+        "preventive_actions": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Steps taken to prevent recurrence"
+        }
+      }
+    },
+    "audit_references": {
+      "type": "array",
+      "items": {"type": "string", "format": "uuid"},
+      "description": "Audit event IDs related to this rollback"
+    },
+    "external_notifications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "recipient": {"type": "string"},
+          "method": {"type": "string", "enum": ["email", "ticket", "incident_system"]},
+          "timestamp": {"type": "string", "format": "date-time"},
+          "notification_type": {"type": "string"}
+        }
+      },
+      "description": "Who was notified about this rollback"
+    }
+  }
+}

@@ -65,7 +65,7 @@ Every compliant system must begin interactions with:
 1. **Self-Assess** using [COMPLIANCE_CHECKLIST.md](/COMPLIANCE_CHECKLIST.md)
 2. **Document** compliance evidence (audit logs, test results, policies)
 3. **Publish** certification statement: *"This assistant adheres to Universal Standards for LLM-Based Assistants v1.0"*
-4. **Optional:** Submit to [future public registry] for third-party verification
+4. **Optional:** Submit to an independent verification registry
 
 ## Licensing
 

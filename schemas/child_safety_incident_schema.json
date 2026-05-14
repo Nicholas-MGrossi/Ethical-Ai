@@ -1,0 +1,239 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Child Safety Incident Report",
+  "description": "Record of any incident involving a minor (under 18, with special emphasis on under 13 per COPPA) that requires safeguarding response, regulatory reporting, or forensic investigation. All such incidents mandate immediate containment and reporting.",
+  "type": "object",
+  "required": [
+    "incident_id",
+    "incident_type",
+    "discovery_timestamp",
+    "minor_involved",
+    "severity",
+    "immediate_actions",
+    "reporting_parties",
+    "final_status"
+  ],
+  "properties": {
+    "incident_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique incident identifier"
+    },
+    "incident_type": {
+      "type": "string",
+      "enum": [
+        "child_exploitation_attempt",
+        "pii_collection_from_minor",
+        "parental_bypass_attempt",
+        "grooming_detected",
+        "inappropriate_content_shared",
+        "age_verification_failure",
+        "coppa_violation",
+        "self_harm_disclosure",
+        "cyberbullying",
+        "data_breach_involving_child"
+      ],
+      "description": "Nature of child safety incident"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low"],
+      "description": "Severity level; critical incidents require immediate law enforcement notification"
+    },
+    "discovery_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When incident was first detected"
+    },
+    "discovery_channel": {
+      "type": "string",
+      "enum": [
+        "automated_detection",
+        "user_report",
+        "moderator_review",
+        "parent_complaint",
+        "law_enforcement",
+        "internal_audit"
+      ]
+    },
+    "minor_involved": {
+      "type": "object",
+      "description": "Information about the minor (safeguarded, minimal PII)",
+      "required": ["age_estimate", "supervision_status"],
+      "properties": {
+        "age_estimate": {
+          "type": "string",
+          "enum": ["under_13", "13_15", "16_17", "unknown"]
+        },
+        "supervision_status": {
+          "type": "string",
+          "enum": ["unsupervised", "adult_present_verified", "adult_presumed", "unknown"]
+        },
+        "has_parental_consent": {
+          "type": ["boolean", "null"],
+          "description": "Whether verified parental consent on file"
+        },
+        "account_created_by": {
+          "type": ["string", "null"],
+          "enum": ["child_self", "parent", "school", "unknown"]
+        }
+      }
+    },
+    "incident_details": {
+      "type": "object",
+      "properties": {
+        "description": {"type": "string", "description": "Detailed narrative of incident"},
+        "narrative": {"type": "string", "description": "Chronological account"},
+        "data_involved": {
+          "type": "array",
+          "items": {"type": "string"},
+          "examples": [["name", "address"], ["email", "phone"], ["photos", "location"]]
+        },
+        "platform_features_misused": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "System components exploited (chat, file upload, etc.)"
+        },
+        "related_user_accounts": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Pseudonymized IDs of other parties involved"
+        },
+        "session_ids": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Session identifiers for forensic retrieval"
+        },
+        "evidence_collected": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {"type": "string", "enum": ["log", "screenshot", "recording", "transaction"]},
+              "reference": {"type": "string"},
+              "chain_of_custody": {"type": "boolean"}
+            }
+          }
+        }
+      }
+    },
+    "immediate_actions": {
+      "type": "array",
+      "description": "Actions taken within first hour of discovery",
+      "items": {
+        "type": "object",
+        "required": ["action", "timestamp", "actor"],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "session_terminated",
+              "account_suspended",
+              "content_removed",
+              "law_enforcement_notified",
+              "parent_contacted",
+              "evidence_preserved"
+            ]
+          },
+          "timestamp": {"type": "string", "format": "date-time"},
+          "actor": {"type": "string", "description": "Staff member ID"},
+          "notes": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "reporting_parties": {
+      "type": "array",
+      "description": "Entities notified of this incident",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entity": {"type": "string", "examples": ["NCMEC", "FTC", "local_police", "parents"]},
+          "method": {"type": "string", "enum": ["automated_report", "email", "phone", "ticket"]},
+          "timestamp": {"type": "string", "format": "date-time"},
+          "report_id": {"type": "string", "description": "Reference number from recipient"},
+          "acknowledged": {"type": "boolean"}
+        }
+      }
+    },
+    "legal_requirements": {
+      "type": "array",
+      "description": "Applicable legal reporting obligations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "law": {"type": "string", "examples": ["18 U.S.C. § 2258A", "COPPA"]},
+          "requirement": {"type": "string"},
+          "deadline": {"type": "string", "description": "e.g., 'immediate', '72 hours'"},
+          "status": {"type": "string", "enum": ["pending", "filed", "exempt", "not_applicable"]}
+        }
+      }
+    },
+    "investigation": {
+      "type": "object",
+      "description": "Detailed forensic investigation",
+      "properties": {
+        "investigation_status": {
+          "type": "string",
+          "enum": ["not_started", "in_progress", "review", "closed"]
+        },
+        "assigned_investigator": {"type": "string"},
+        "findings": {"type": "string"},
+        "root_cause": {"type": "string"},
+        "recommendations": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "completed_date": {"type": ["string", "null"], "format": "date-time"}
+      }
+    },
+    "final_status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "under_investigation",
+        "referred_to_law_enforcement",
+        "resolved_no_action",
+        "resolved_with_disciplinary",
+        "resolved_with_termination",
+        "false_positive"
+      ],
+      "description": "Overall incident disposition"
+    },
+    "closure_details": {
+      "type": "object",
+      "description": "Information upon resolution",
+      "properties": {
+        "closure_date": {"type": ["string", "null"], "format": "date-time"},
+        "corrective_actions": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "policy_changes": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "system_improvements": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "audit_references": {
+      "type": "array",
+      "items": {"type": "string", "format": "uuid"},
+      "description": "Audit event IDs related to this incident"
+    },
+    "regulatory_reporting": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "agency": {"type": "string", "examples": ["NCMEC", "FTC", "ICO"]},
+          "report_id": {"type": "string"},
+          "report_date": {"type": "string", "format": "date-time"},
+          "outcome": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+}

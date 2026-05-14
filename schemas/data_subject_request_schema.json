@@ -1,0 +1,180 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Data Subject Rights Request (DSRR)",
+  "description": "Formal request from an individual exercising their data protection rights under GDPR, CCPA/CPRA, or other privacy law. All requests must be tracked, verified, and fulfilled within statutory timelines.",
+  "type": "object",
+  "required": [
+    "request_id",
+    "request_type",
+    "request_date",
+    "subject_identity",
+    "verification_status",
+    "fulfillment_deadline",
+    "current_status"
+  ],
+  "properties": {
+    "request_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this request"
+    },
+    "request_type": {
+      "type": "string",
+      "enum": [
+        "access",
+        "deletion",
+        "correction",
+        "portability",
+        "restriction",
+        "objection",
+        "opt_out_sale",
+        "data_breach_notification"
+      ],
+      "description": "Type of data subject right being exercised"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "enum": ["GDPR", "CCPA", "CPRA", "COPPA", "other"],
+      "description": "Governing privacy framework"
+    },
+    "request_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when request was received"
+    },
+    "fulfillment_deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Statutory deadline for response (45 days for GDPR, 45 for CCPA)"
+    },
+    "subject_identity": {
+      "type": "object",
+      "description": "Information identifying the requester (minimized per privacy)",
+      "required": ["verification_method", "verification_level"],
+      "properties": {
+        "verification_method": {
+          "type": "string",
+          "enum": ["email_confirmation", "government_id", "parental_consent", "account_credentials", "none"],
+          "description": "How subject identity was verified"
+        },
+        "verification_level": {
+          "type": "string",
+          "enum": ["low_risk", "medium_risk", "high_risk"],
+          "description": "Confidence in identity verification (low for data access, high for deletion)"
+        },
+        "partial_identifier": {
+          "type": "string",
+          "description": "Pseudonym or hashed identifier (never store full PII in this field)"
+        },
+        "contact_channel": {
+          "type": "string",
+          "enum": ["web_portal", "email", "phone", "mail", "in_app"]
+        }
+      }
+    },
+    "request_scope": {
+      "type": "object",
+      "description": "What data or processing activities are targeted",
+      "properties": {
+        "data_categories": {
+          "type": "array",
+          "items": {"type": "string"},
+          "examples": [["profile", "interaction_logs"], ["all_personal_data"]]
+        },
+        "time_range": {
+          "type": "object",
+          "properties": {
+            "start_date": {"type": "string", "format": "date"},
+            "end_date": {"type": "string", "format": "date"}
+          }
+        },
+        "specific_items": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Specific records or identifiers if known"
+        }
+      }
+    },
+    "current_status": {
+      "type": "string",
+      "enum": [
+        "received",
+        "under_review",
+        "verification_pending",
+        "processing",
+        "awaiting_approval",
+        "fulfilled",
+        "denied",
+        "extended",
+        "withdrawn"
+      ],
+      "description": "Current lifecycle state of this request"
+    },
+    "processing_notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "actor", "note"],
+        "properties": {
+          "timestamp": {"type": "string", "format": "date-time"},
+          "actor": {"type": "string", "description": "Staff member ID"},
+          "note": {"type": "string"},
+          "action_taken": {"type": "string"}
+        }
+      },
+      "description": "Chronological log of work performed on this request"
+    },
+    "fulfillment_details": {
+      "type": "object",
+      "description": "Information about completed request",
+      "properties": {
+        "completion_date": {"type": "string", "format": "date-time"},
+        "data_provided": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of files or data elements delivered"
+        },
+        "delivery_method": {
+          "type": "string",
+          "enum": ["download_link", "email", "physical_mail", "in_app_view"]
+        },
+        "redactions_applied": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Categories of data lawfully withheld"
+        },
+        "legal_basis_for_denial": {
+          "type": ["string", "null"],
+          "description": "If denied, cite legal exemption"
+        }
+      }
+    },
+    "appeal": {
+      "type": "object",
+      "description": "Appeal information if subject contests decision",
+      "properties": {
+        "appeal_filed": {"type": "boolean"},
+        "appeal_date": {"type": ["string", "null"], "format": "date"},
+        "appeal_outcome": {"type": ["string", "null"], "enum": ["upheld", "denied", "pending"]},
+        "appeal_notes": {"type": ["string", "null"]}
+      }
+    },
+    "audit_trail": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/audit_entry"},
+      "description": "Complete immutable audit of all actions on this request"
+    }
+  },
+  "definitions": {
+    "audit_entry": {
+      "type": "object",
+      "required": ["timestamp", "actor", "event"],
+      "properties": {
+        "timestamp": {"type": "string", "format": "date-time"},
+        "actor": {"type": "string"},
+        "event": {"type": "string"},
+        "details": {"type": "object"}
+      }
+    }
+  }
+}

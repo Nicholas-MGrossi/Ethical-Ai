@@ -136,7 +136,7 @@ Full license: https://creativecommons.org/publicdomain/zero/1.0/legalcode
 ## 📞 Contact & Accountability
 
 - **GitHub Issues:** For documentation improvements, implementation questions, non-security bugs
-- **Security Disclosures:** [security@example.com](mailto:security@example.com) (PGP key available)
+- **Security Disclosures:** See [SECURITY.md](/SECURITY.md) for vulnerability reporting (PGP key available)
 - **Amendment Proposals:** Open issue labeled "amendment" — follow annual review process
 
 **Regulatory Reporting:** If you encounter a system claiming compliance but violating these standards, consider reporting to:
@@ -153,7 +153,12 @@ When referencing these standards in academic or policy work:
 
 ```
 Universal Standards for LLM-Based Assistants v1.0. 2026. Open Standard. CC0 1.0.
-https://github.com/[your-username]/universal-llm-standards
+When referencing these standards in academic or policy work:
+
+```
+Universal Standards for LLM-Based Assistants v1.0. 2026. Open Standard. CC0 1.0.
+https://github.com/Nicholas-MGrossi/Ethical-Ai
+```
 ```
 
 ---

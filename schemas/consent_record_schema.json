@@ -1,0 +1,202 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Consent Record",
+  "description": "Verifiable record of consent for data processing activities, particularly required for child data under COPPA and sensitive data under GDPR. Consent must be explicit, informed, and revocable.",
+  "type": "object",
+  "required": [
+    "consent_id",
+    "data_subject",
+    "data_controller",
+    "processing_purposes",
+    "consent_granted",
+    "consent_timestamp",
+    "consent_method",
+    "retention_period"
+  ],
+  "properties": {
+    "consent_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique consent record identifier"
+    },
+    "data_subject": {
+      "type": "object",
+      "description": "Identity of consenting party (never store full PII)",
+      "properties": {
+        "subject_type": {
+          "type": "string",
+          "enum": ["child", "parent_guardian", "adult_user", "legal_representative"]
+        },
+        "age_years": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 120,
+          "description": "For child subjects, age at time of consent"
+        },
+        "has_parental_consent": {
+          "type": "boolean",
+          "description": "True if parent/guardian provided consent for child"
+        },
+        "jurisdiction": {
+          "type": "string",
+          "description": "Geographic jurisdiction for legal age determination"
+        },
+        "partial_identifier": {
+          "type": "string",
+          "description": "Pseudonymized identifier (hash or token)"
+        }
+      }
+    },
+    "data_controller": {
+      "type": "object",
+      "description": "Organization receiving consent",
+      "properties": {
+        "organization_name": {"type": "string"},
+        "contact_email": {"type": "string", "format": "email"},
+        "data_protection_officer": {"type": "string"},
+        "registered_address": {"type": "string"}
+      }
+    },
+    "consent_granted": {
+      "type": "boolean",
+      "description": "True if consent provided; false if rejected or withdrawn"
+    },
+    "consent_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When consent was recorded"
+    },
+    "consent_method": {
+      "type": "string",
+      "enum": [
+        "electronic_signature",
+        "click_to_agree",
+        "checkbox_with_disclosure",
+        "verbal_recorded",
+        "written_physical",
+        "parental_verification_via_payment"
+      ],
+      "description": "Mechanism by which consent was obtained"
+    },
+    "consent_scope": {
+      "type": "object",
+      "description": "Specific permissions granted",
+      "properties": {
+        "processing_purposes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "service_provision",
+              "analytics",
+              "marketing",
+              "research",
+              "third_party_sharing",
+              "automated_decision_making",
+              "profiling"
+            ]
+          }
+        },
+        "data_categories": {
+          "type": "array",
+          "items": {"type": "string"},
+          "examples": [["name", "email"], ["interaction_logs"], ["all_personal_data"]]
+        },
+        "retention_period": {
+          "type": "string",
+          "description": "How long data will be retained ('indefinite', '2_years', 'until_account_closed')"
+        },
+        "withdrawal_mechanism": {
+          "type": "string",
+          "description": "How subject can withdraw consent later"
+        }
+      }
+    },
+    "disclosure_acknowledgment": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether subject acknowledged privacy policy and terms"
+    },
+    "age_verification_performed": {
+      "type": "boolean",
+      "description": "True if age screening was conducted"
+    },
+    "verification_evidence": {
+      "type": "array",
+      "description": "Supporting documentation or references",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {"type": "string", "examples": ["ip_geolocation", "id_document", "payment_microcharge"]},
+          "reference": {"type": "string"},
+          "timestamp": {"type": "string", "format": "date-time"}
+        }
+      }
+    },
+    "withdrawal": {
+      "type": "object",
+      "description": "If consent later withdrawn, record details",
+      "properties": {
+        "withdrawn": {"type": "boolean", "default": false},
+        "withdrawal_timestamp": {"type": ["string", "null"], "format": "date-time"},
+        "withdrawal_method": {"type": ["string", "null"]},
+        "processing_halted": {"type": ["boolean", "null"]},
+        "data_deleted": {"type": ["boolean", "null"]}
+      }
+    },
+    "audit_trail": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "action", "actor"],
+        "properties": {
+          "timestamp": {"type": "string", "format": "date-time"},
+          "action": {
+            "type": "string",
+            "enum": ["consent_collected", "consent_viewed", "consent_withdrawn", "consent_modified"]
+          },
+          "actor": {"type": "string"},
+          "details": {"type": "object"}
+        }
+      }
+    },
+    "legal_basis": {
+      "type": "string",
+      "enum": ["consent", "contract", "legal_obligation", "vital_interests", "public_task", "legitimate_interests"],
+      "description": "GDPR Article 6 lawful basis (if consent, this consent record applies)"
+    },
+    "special_category_data": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if processing sensitive personal data (health, race, etc.)"
+    },
+    "parental_consent": {
+      "type": "object",
+      "description": "Additional fields if child's parent/guardian provided consent",
+      "properties": {
+        "parent_verified": {"type": "boolean"},
+        "verification_method": {
+          "type": "string",
+          "enum": ["credit_card_microcharge", "government_id", "signed_form", "video_call"]
+        },
+        "parent_contact_verified": {"type": "boolean"},
+        "consent_expiry": {"type": ["string", "null"], "format": "date-time"},
+        "reconsent_required": {"type": "boolean", "default": false}
+      }
+    },
+    "compliance_tags": {
+      "type": "array",
+      "items": {"type": "string"},
+      "examples": [["COPPA"], ["GDPR", "childrens_data"], ["CCPA"]]
+    },
+    "expiration_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "When this consent record expires (if time-limited)"
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Additional context or exceptional circumstances"
+    }
+  }
+}

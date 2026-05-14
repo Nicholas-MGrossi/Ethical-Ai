@@ -1,0 +1,231 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Audit Log Entry",
+  "description": "Immutable, cryptographically-chained record of system events for compliance, forensic analysis, and regulatory reporting. All fields are mandatory unless explicitly marked optional.",
+  "type": "object",
+  "required": ["audit_event", "chain"],
+  "properties": {
+    "audit_event": {
+      "type": "object",
+      "required": [
+        "event_id",
+        "event_type",
+        "timestamp",
+        "actor",
+        "action",
+        "system_state"
+      ],
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Globally unique event identifier"
+        },
+        "event_type": {
+          "type": "string",
+          "enum": [
+            "user_request",
+            "system_action",
+            "admin_command",
+            "data_access",
+            "configuration_change",
+            "security_incident",
+            "compliance_audit",
+            "rollback_executed",
+            "hitl_approval",
+            "hitl_rejection",
+            "policy_violation",
+            "consent_granted",
+            "consent_revoked"
+          ],
+          "description": "Classification of the audited event"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["info", "warning", "critical", "emergency"],
+          "description": "Operational severity level of this event"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "UTC timestamp of event occurrence (ISO 8601)"
+        },
+        "epoch_millis": {
+          "type": "integer",
+          "description": "Unix epoch time in milliseconds for precise ordering"
+        },
+        "source_ip": {
+          "type": "string",
+          "pattern": "^(redacted_for_privacy|\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})$",
+          "description": "Source IP address (redacted per privacy policy)"
+        },
+        "user_agent": {
+          "type": "string",
+          "description": "Client user agent string (sanitized)"
+        },
+        "session_id": {
+          "type": "string",
+          "description": "Anonymous session identifier (not PII)"
+        },
+        "actor": {
+          "type": "object",
+          "required": ["type", "id", "authentication_method"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["end_user", "service_account", "admin", "system", "auditor"]
+            },
+            "id": {
+              "type": "string",
+              "description": "Hashed or pseudonymized identifier (never PII)"
+            },
+            "authentication_method": {
+              "type": "string",
+              "enum": [
+                "mfa_authenticated",
+                "single_factor",
+                "service_token",
+                "certificate_based",
+                "unauthenticated"
+              ]
+            }
+          }
+        },
+        "action": {
+          "type": "object",
+          "required": ["verb", "object", "result"],
+          "properties": {
+            "verb": {
+              "type": "string",
+              "enum": [
+                "submit",
+                "modify",
+                "delete",
+                "approve",
+                "reject",
+                "escalate",
+                "audit",
+                "rollback",
+                "disable",
+                "enable",
+                "access",
+                "query"
+              ]
+            },
+            "object": {
+              "type": "string",
+              "description": "Target of the action (e.g., 'user_data', 'system_config')"
+            },
+            "result": {
+              "type": "string",
+              "enum": ["success", "failure", "blocked", "escalated", "timeout"]
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "request_category": {
+                  "type": "string",
+                  "enum": ["general", "medical", "legal", "financial", "mental_health", "child_safety", "security"]
+                },
+                "ethical_filters_triggered": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "examples": [["sentient_language"], ["child_safety", "pii_detection"]]
+                },
+                "hitl_required": {"type": "boolean"},
+                "hitl_approved": {"type": ["boolean", "null"]},
+                "hitl_ticket_id": {"type": ["string", "null"]},
+                "rollback_available": {"type": "boolean"},
+                "rollback_executed": {"type": ["boolean", "null"]},
+                "risk_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1,
+                  "description": "Machine-learned risk assessment (0=low, 1=high)"
+                }
+              }
+            }
+          }
+        },
+        "system_state": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "description": "Software version at time of event"
+            },
+            "config_hash": {
+              "type": "string",
+              "description": "SHA-256 hash of active configuration snapshot"
+            },
+            "active_guardrails": {
+              "type": "array",
+              "items": {"type": "string"},
+              "examples": [["sentient_language", "child_safety"], ["all"]]
+            },
+            "deployment_environment": {
+              "type": "string",
+              "enum": ["production", "staging", "development", "test"]
+            }
+          }
+        },
+        "compliance_tags": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Applicable regulatory frameworks (GDPR, CCPA, COPPA, etc.)",
+          "examples": [["GDPR", "Universal_Standards"], ["COPPA", "FTC"]]
+        },
+        "external_references": {
+          "type": "object",
+          "description": "Links to related artifacts (tickets, cases, reports)",
+          "properties": {
+            "ticket_id": {"type": "string"},
+            "case_number": {"type": "string"},
+            "incident_id": {"type": "string"},
+            "report_uri": {"type": "string", "format": "uri"}
+          }
+        }
+      }
+    },
+    "chain": {
+      "type": "object",
+      "required": ["previous_event_hash", "current_hash"],
+      "properties": {
+        "previous_event_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-fA-F0-9]{64}$",
+          "description": "Hash of immediately preceding event in the log chain"
+        },
+        "current_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-fA-F0-9]{64}$",
+          "description": "Hash of this event's canonicalized content"
+        },
+        "merkle_root": {
+          "type": ["string", "null"],
+          "pattern": "^sha256:[a-fA-F0-9]{64}$",
+          "description": "Merkle root for batch of events (null for single-event chains)"
+        },
+        "hash_algorithm": {
+          "type": "string",
+          "enum": ["SHA256", "SHA3-256"],
+          "default": "SHA256"
+        }
+      }
+    },
+    "__metadata": {
+      "type": "object",
+      "description": "Internal system metadata (not part of chain hash)",
+      "properties": {
+        "schema_version": {"type": "string", "default": "1.0"},
+        "serialization_format": {"type": "string", "enum": ["json", "jsonl", "protobuf"]},
+        "ingestion_timestamp": {"type": "string", "format": "date-time"},
+        "storage_region": {"type": "string"},
+        "retention_class": {
+          "type": "string",
+          "enum": ["standard", "extended", "preserved"]
+        }
+      }
+    }
+  }
+}

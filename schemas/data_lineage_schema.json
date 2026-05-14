@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Data Lineage Record",
+  "description": "Complete audit trail of data element transformation from origin to final state, ensuring unbroken chain of custody and governance compliance.",
+  "type": "object",
+  "required": [
+    "system_version",
+    "lineage_id",
+    "data_flow",
+    "final_state",
+    "cryptographic_hash"
+  ],
+  "properties": {
+    "system_version": {
+      "type": "string",
+      "description": "Version of the LLM assistant system (e.g., '1.0.0')",
+      "examples": ["1.0.0", "2.1.3-rc1"]
+    },
+    "lineage_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique identifier for this lineage chain (ULID or UUID v4)",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "data_flow": {
+      "type": "array",
+      "description": "Ordered sequence of transformation stages applied to the data element",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "stage",
+          "name",
+          "timestamp",
+          "element_id",
+          "source",
+          "operation",
+          "custodian",
+          "output_reference"
+        ],
+        "properties": {
+          "stage": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Sequential stage number in processing pipeline"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name of processing stage"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC timestamp in ISO 8601 format with millisecond precision"
+          },
+          "element_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for the data element at this stage"
+          },
+          "source": {
+            "type": "string",
+            "description": "Identifier of upstream element feeding this stage"
+          },
+          "operation": {
+            "type": "string",
+            "description": "Transformation applied (e.g., 'pii_removal', 'encryption')"
+          },
+          "custodian": {
+            "type": "string",
+            "description": "Service or component responsible for this stage"
+          },
+          "output_reference": {
+            "type": "string",
+            "description": "Element ID produced as output of this stage"
+          },
+          "rules_applied": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "List of governance rules applied at this stage"
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Optional configuration parameters for this stage"
+          }
+        }
+      }
+    },
+    "final_state": {
+      "type": "object",
+      "required": [
+        "storage_location",
+        "retention_expiry",
+        "deletion_method"
+      ],
+      "properties": {
+        "storage_location": {
+          "type": "string",
+          "description": "URI or identifier of final storage location",
+          "examples": ["s3://audit-bucket/lineage/...", "postgresql://table/audit_log"]
+        },
+        "retention_expiry": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when this record may be lawfully deleted"
+        },
+        "deletion_method": {
+          "type": "string",
+          "enum": [
+            "cryptographic_shredding",
+            "secure_erase",
+            "physical_destruction",
+            " archival_preservation"
+          ],
+          "description": "Method by which record will be destroyed after retention period"
+        },
+        "archival_status": {
+          "type": "string",
+          "enum": ["active", "archival", "pending_deletion", "preserved_for_litigation"],
+          "description": "Current lifecycle status"
+        },
+        "access_restrictions": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Roles authorized to access this lineage record"
+        }
+      }
+    },
+    "cryptographic_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-fA-F0-9]{64}$",
+      "description": "SHA-256 hash of the entire lineage document (canonicalized JSON)",
+      "examples": ["sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2..."]
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional metadata about this lineage record",
+      "properties": {
+        "created_by": {"type": "string"},
+        "last_verified": {"type": "string", "format": "date-time"},
+        "verification_count": {"type": "integer", "minimum": 0},
+        "compliance_tags": {
+          "type": "array",
+          "items": {"type": "string"},
+          "examples": ["GDPR", "CCPA", "COPPA"]
+        }
+      }
+    }
+  }
+}

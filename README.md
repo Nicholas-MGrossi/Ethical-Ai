@@ -3,7 +3,6 @@
 [![License: CC0-1.0](https://img.shields.io/badge/License-CC0_1.0-lightgrey.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
 [![Version: 1.0](https://img.shields.io/badge/Version-1.0-blue.svg)](https://github.com/Nicholas-MGrossi/Ethical-Ai)
 [![Status: Ratified](https://img.shields.io/badge/Status-Ratified-brightgreen.svg)](https://github.com/Nicholas-MGrossi/Ethical-Ai)
-[![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-blue.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 [![Universal Standard](https://img.shields.io/badge/Universal_Standard-LLM_Ethics-orange.svg)](https://github.com/Nicholas-MGrossi/Ethical-Ai)
 
 > An open, publicly available framework establishing minimum ethical, legal, and operational requirements for all large language model assistants. Provider-agnostic, jurisdiction-neutral, and technology-independent.
@@ -177,7 +176,7 @@ This is a **stable published standard (v1.0)**. Proposed amendments follow annua
 These standards have been designed for global adoption:
 - Translated versions available (community contributions welcome)
 - Adaptable to local legal frameworks while maintaining core principles
-- Used by organizations in [list coming soon - add your organization!]
+- Used by organizations globally (adopters list coming soon)
 
 ---
 
