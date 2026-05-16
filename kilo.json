@@ -1,0 +1,22 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "default_agent": "ethical-ai",
+  "model": "stepfun/step-3.5-flash",
+  "instructions": [
+    "ARCHITECTURE_AND_ETHICS_PROTOCOLS.md",
+    "CRITICAL_WORKFLOW_GATES.md",
+    "MACHINE_READABLE_RESPONSE_FORMAT.md",
+    "SYSTEM_PROMPT_IMPLEMENTATION_TEMPLATE.md",
+    "SCHEMA_AUDIT_LINEAGE.json"
+  ],
+  "permission": {
+    "read": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "bash": "allow",
+    "edit": {
+      "**": "allow"
+    },
+    "external_directory": "deny"
+  }
+}
