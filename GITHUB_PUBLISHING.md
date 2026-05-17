@@ -12,7 +12,7 @@
 7. GitHub will show you commands. Run these in your project directory:
 
 ```bash
-git remote add origin https://github.com/YOUR_USERNAME/universal-llm-standards.git
+git remote add origin https://github.com/Nicholas-MGrossi/Ethical-Ai.git
 git branch -M main
 git push -u origin main
 ```
@@ -29,7 +29,7 @@ gh repo create universal-llm-standards --public --source=. --remote=origin --pus
 2. Then run:
 
 ```bash
-git remote add origin https://TOKEN@github.com/YOUR_USERNAME/universal-llm-standards.git
+git remote add origin https://TOKEN@github.com/Nicholas-MGrossi/Ethical-Ai.git
 git push -u origin main
 ```
 
@@ -76,11 +76,11 @@ of authorship and/or a database (the "Work").
 Check repository is live:
 ```bash
 git remote -v
-# Should show: origin https://github.com/YOUR_USERNAME/universal-llm-standards.git (fetch)
-#              origin https://github.com/YOUR_USERNAME/universal-llm-standards.git (push)
+# Should show: origin https://github.com/Nicholas-MGrossi/Ethical-Ai.git (fetch)
+#              origin https://github.com/Nicholas-MGrossi/Ethical-Ai.git (push)
 ```
 
-Visit: `https://github.com/YOUR_USERNAME/universal-llm-standards`
+Visit: `https://github.com/Nicholas-MGrossi/Ethical-Ai`
 
 ## Need Help?
 

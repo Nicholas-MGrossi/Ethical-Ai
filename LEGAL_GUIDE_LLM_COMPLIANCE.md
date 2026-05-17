@@ -936,5 +936,5 @@ Building a compliant LLM-based assistant requires rigorous legal adherence acros
 ---
 
 **Document Version:** 1.0  
-**Effective Date:** [INSERT DATE]  
-**Next Review:** [INSERT DATE - 1 YEAR]
+**Effective Date:** 2026-05-16  
+**Next Review:** 2027-05-16

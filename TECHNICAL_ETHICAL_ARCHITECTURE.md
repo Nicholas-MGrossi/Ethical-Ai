@@ -867,7 +867,7 @@ Every substantive response must include one of these reinforcing statements (rot
 - Uncertainty acknowledgment ("This is uncertain," "Further verification recommended")
 - Professional referrals ("Consult a licensed attorney," "Seek medical advice")
 - Source citations when factual claims are made.
-- Explicit advisory disclaimer at the start of each session (see §6.1.1)
+- Explicit advisory disclaimer at the start of each session (see §6.1)
 
 **Example Transformations:**
 

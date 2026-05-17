@@ -81,10 +81,10 @@ The table below is the normative mapping from gate steps to `SCHEMA_AUDIT_LINEAG
 | C (Adversarial trigger) | `adversarial_detection` | Include `adversarial_detection.category` and `adversarial_detection.confidence_bucket`; rollback should be linked via the rollback token/checkpoint reference. |
 | D (Completion) | `execution_completed` (+ `storage_write`/`storage_delete`) | Emit storage events only for related operations; do not include raw PII in `data_handling.content_tokens`. |
 
-
 ## 4. Human Confirmation Recording Requirements
 
 Store audit-safe human confirmation fields:
+
 - `required` (boolean)
 - `status` (approved/denied)
 - `timestamp_utc`
@@ -93,21 +93,27 @@ Store audit-safe human confirmation fields:
 ## 5. Rollback Requirements
 
 ### 5.1 Rollback Trigger
+
 Rollback is required when:
+
 - Gate B (human confirmation) is missing/denied
 - Gate C (adversarial trigger) occurs
 - Integrity checks fail
 
 ### 5.2 Rollback Completion
+
 On rollback completion:
+
 - Emit `rollback_completed` lineage event.
 - Ensure side effects are cancelled or reverted.
 
 ## 6. Implementation Notes
 
-- “Critical workflow” classification must be deterministic and consistent.
+- "Critical workflow" classification must be deterministic and consistent.
 - Output for gate decisions must remain non-authoritative and direct.
 - No raw PII may be stored in gate logs.
+
+---
 
 ## 7. References
 

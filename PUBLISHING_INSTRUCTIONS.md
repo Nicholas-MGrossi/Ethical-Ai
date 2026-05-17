@@ -27,7 +27,7 @@ After creating the repo, GitHub shows you a page with "…or push an existing re
 **Copy and run these commands exactly:**
 
 ```bash
-git remote add origin https://github.com/YOUR_USERNAME/universal-llm-standards.git
+git remote add origin https://github.com/Nicholas-MGrossi/Ethical-Ai.git
 git branch -M main
 git push -u origin main
 ```
@@ -52,12 +52,12 @@ Delta compression using up to X threads
 Writing objects: 100% (X/X), X bytes | X bytes/s, done.
 Total X (delta X), reused 0 (delta 0), pack-reused 0
 remote: Resolving deltas: 100% (X/X), done.
-To https://github.com/YOUR_USERNAME/universal-llm-standards.git
+To https://github.com/Nicholas-MGrossi/Ethical-Ai.git
  * [new branch]      main -> main
 Branch 'main' set up to track remote branch 'main' from 'origin'.
 ```
 
-**Visit:** `https://github.com/YOUR_USERNAME/universal-llm-standards` to confirm files are live.
+**Visit:** `https://github.com/Nicholas-MGrossi/Ethical-Ai` to confirm files are live.
 
 ---
 
@@ -68,7 +68,7 @@ Branch 'main' set up to track remote branch 'main' from 'origin'.
    - **Source:** Deploy from a branch
    - **Branch:** `main` → `/docs` folder
    - Click **Save**
-3. Your site will be live at: `https://YOUR_USERNAME.github.io/universal-llm-standards/`
+3. Your site will be live at: `https://Nicholas-MGrossi.github.io/universal-llm-standards/`
 
 ---
 
@@ -150,7 +150,7 @@ universal-llm-standards/
 ### "Remote origin already exists"
 ```bash
 git remote remove origin
-git remote add origin https://github.com/YOUR_USERNAME/universal-llm-standards.git
+git remote add origin https://github.com/Nicholas-MGrossi/Ethical-Ai.git
 ```
 
 ### Authentication failed

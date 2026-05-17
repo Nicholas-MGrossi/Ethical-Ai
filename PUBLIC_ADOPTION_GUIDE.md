@@ -189,7 +189,7 @@ These standards are released as an **open public standard**.
 If you encounter a system claiming compliance but violating these standards:
 1. Document specific incidents with screenshots/logs
 2. Contact the provider directly (if safe to do so)
-3. Submit violation report to: [tbd: ethics board/oversight committee]
+3. Submit violation report to: [GitHub Issues: https://github.com/Nicholas-MGrossi/Ethical-Ai/issues]
 4. Consider notifying relevant regulators (FTC, ICO, etc.)
 
 **Contributing:**

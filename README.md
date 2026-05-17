@@ -39,6 +39,7 @@ The **Universal Standards for LLM-Based Assistants v1.0** provide a comprehensiv
 - **Ethical Boundaries** — Explicit prohibition of rights violations and manipulation
 
 ### ✅ Regulatory Compliance
+
 - **GDPR-aligned** — Data minimization, purpose limitation, user rights
 - **CCPA/CPRA compliant** — Consumer privacy protections built-in
 - **COPPA-compliant** — Strict child data protection requirements
@@ -46,6 +47,7 @@ The **Universal Standards for LLM-Based Assistants v1.0** provide a comprehensiv
 - **Jurisdiction-neutral** — Adaptable to any legal framework
 
 ### ✅ Practical Implementation
+
 - **5-minute deployment** — Copy-paste system prompt ready for production
 - **Provider-agnostic** — Works with any LLM (OpenAI, Anthropic, Mistral, local models)
 - **Technology-independent** — Framework applies to all implementation methods
@@ -55,19 +57,22 @@ The **Universal Standards for LLM-Based Assistants v1.0** provide a comprehensiv
 ## 🚀 Getting Started in 3 Steps
 
 ### 1. Copy the System Prompt
+
 ```bash
 # Open the implementation template
 cat SYSTEM_PROMPT_IMPLEMENTATION_TEMPLATE.md
 ```
+
 Copy the entire system prompt content into your LLM's system message configuration.
 
 ### 2. Implement Child Safety
 - Add age verification gate for users under 13
 - Require parental consent workflow (COPPA)
 - Disable personal data collection without verified guardian approval
-- Reference: `QUICK_REFERENCE_CARD.md` for age-gate logic
+ - Reference: `QUICK_REFERENCE_CARD.md` for age-gate logic
 
 ### 3. Audit Against Checklist
+
 - Complete pre-launch sign-off from `COMPLIANCE_CHECKLIST.md`
 - Document compliance evidence (test results, policies, audit logs)
 - Optional: Publish certification statement

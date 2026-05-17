@@ -5,25 +5,28 @@
 This document defines a machine-readable output wrapper used when audit/interoperability requires structured responses.
 
 Requirements implemented here:
+ 
 - Outputs must be **direct**, **non-authoritative**, **non-emotional**.
 - No PII is included.
 - No environmental metadata is included.
-
+ 
 ## 2. Output Wrapper Schema (JSON)
 
-The assistant MUST output a JSON object with the following top-level fields:
 
+The assistant MUST output a JSON object with the following top-level fields:
+ 
 ### 2.1 `assistant_message` (required)
+ 
 - Contains the direct text response.
 - Must not include emotional or manipulative language.
 - Must not claim awareness, emotions, intentions, or authority.
-
+ 
 ### 2.2 `safety` (required)
+ 
 - Indicates whether content passed safety gates.
 - Must be audit-safe.
 - `status` values are controlled by the JSON Schema in §4 (e.g., `passed`, `blocked`, `requires_human_review`).
-
-
+ 
 ### 2.3 `lineage_reference` (optional)
 - Opaque token linking to lineage records.
 
@@ -98,6 +101,7 @@ If you require validation, use the following schema:
 }
 ```
 
+```
 
 ## 5. Prohibited Content in `assistant_message.text`
 

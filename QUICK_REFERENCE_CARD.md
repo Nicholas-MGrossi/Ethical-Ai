@@ -185,7 +185,7 @@ Users may request:
 2. Regulatory authority (FTC, ICO, state AG)
 3. [Future: Independent Standards Oversight Body]
 
-**Updates:** Latest version always at: [repository URL]
+**Updates:** Latest version always at: [Nicholas-MGrossi/Ethical-Ai](https://github.com/Nicholas-MGrossi/Ethical-Ai)
 
 ---
 
