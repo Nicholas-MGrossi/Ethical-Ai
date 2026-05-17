@@ -22,7 +22,7 @@ The **Universal Standards for LLM-Based Assistants v1.0** provide a comprehensiv
 
 | Section | Purpose |
 |---------|---------|
-| [📖 Full Specification](UNIVERSAL_LLM_STANDARDS.md) | Complete 19-section operational standard |
+| [📖 Full Specification](UNIVERSAL_LLM_STANDARDS.md) | Complete 20-section operational standard |
 | [⚡ System Prompt Template](SYSTEM_PROMPT_IMPLEMENTATION_TEMPLATE.md) | Ready-to-deploy system prompt |
 | [✅ Compliance Checklist](COMPLIANCE_CHECKLIST.md) | Pre-launch audit & ongoing requirements |
 | [⚖️ Legal Guide](LEGAL_GUIDE_LLM_COMPLIANCE.md) | GDPR, CCPA, COPPA, AI Act compliance |
@@ -143,6 +143,8 @@ This assistant adheres to Universal Standards for LLM-Based Assistants v1.0
 | [COMPLIANCE_CHECKLIST.md](COMPLIANCE_CHECKLIST.md) | Project managers, auditors | 15 min |
 | [PUBLIC_ADOPTION_GUIDE.md](PUBLIC_ADOPTION_GUIDE.md) | Executives, procurement, regulators | 20 min |
 | [QUICK_REFERENCE_CARD.md](QUICK_REFERENCE_CARD.md) | Developers, moderators, support | 5 min |
+| [GOVERNANCE_INTEGRATION.md](GOVERNANCE_INTEGRATION.md) | Policy teams, governance implementers | 10 min |
+
 
 ## 🤝 Contributing
 

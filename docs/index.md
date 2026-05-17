@@ -42,7 +42,7 @@ These standards establish the minimum requirements for all large language model 
 - [Quick Reference Card](/QUICK_REFERENCE_CARD.md) — One-page developer cheat sheet with age-gate logic, prohibited phrases
 
 ### Specification
-- [Universal Standards (Full)](/UNIVERSAL_LLM_STANDARDS.md) — Complete 19-section operational specification
+- [Universal Standards (Full)](/UNIVERSAL_LLM_STANDARDS.md) — Complete 20-section operational specification
 - [Compliance Checklist](/COMPLIANCE_CHECKLIST.md) — Pre-launch sign-off and ongoing audit requirements
 
 ### Legal & Governance
