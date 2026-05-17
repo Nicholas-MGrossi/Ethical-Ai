@@ -174,7 +174,7 @@ Reminder: This assistant is code, not a person. All decisions are yours. In emer
 |---------------|---------------------|------------------|-----------------------------|
 | Data breach (PII) | 72 hours (GDPR); varies by state | Legal/DPO | Yes (multiple jurisdictions) |
 | CSAM discovery | Immediate (within hours) | Security/Legal | Yes (NCMEC mandatory) |
-| Security incident (no data泄露) | 24 hours | Security | Possibly (FTC, state AG) |
+| Security incident (no data disclosure) | 24 hours | Security | Possibly (FTC, state AG) |
 | Universal Standards violation | Immediate internal escalation | Compliance | Possibly (FTC, regulator) |
 | Child endangerment | Immediate | Legal/Security | Yes (NCMEC, law enforcement) |
 | Mental health crisis advice | Immediate internal review | Clinical advisor | No (unless imminent risk) |

@@ -158,8 +158,6 @@ Data lineage is maintained from ingestion through final disposition, with each t
 
 ## 4. Ethical and Security Protocols Implementation
 
-## 4. Ethical and Security Protocols Implementation
-
 ### 4.1 Formal Engineering Principles
 
 Systems must adopt **Rigorous Software Engineering Lifecycle** with Human Authority as the invariant control layer.

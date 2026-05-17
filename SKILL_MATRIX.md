@@ -158,11 +158,96 @@
 
 ---
 
-## 3. Compliance Checklist (Skill-Operational)
-- [ ] Scrub PII and environmental metadata at the scrubbing boundary before transmission/persistence
-- [ ] Emit lineage events at required stages (intake, scrub, classification, storage, deletion, HITL)
-- [ ] Enforce HITL for critical workflows; deny => do not proceed; emit denial lineage
-- [ ] On adversarial/coercive detection => quarantine + rollback + adversarial lineage emission
-- [ ] Audit logs are immutable and do not store raw PII or environmental metadata
-- [ ] Outputs remain non-authoritative, direct, non-emotional (and optionally machine-readable JSON)
-- [ ] Minor-originated personal data is blocked; minor mode includes adult supervision enforcement
+## 3. Compliance Checklist (Given/When/Then — Schema-Aligned)
+
+Each testable requirement is expressed in **Given/When/Then** form and mapped to the `event_type` enum defined in `SCHEMA_AUDIT_LINEAGE.json` and the gate definitions in `CRITICAL_WORKFLOW_GATES.md`.
+
+### 3.1 PII & Environmental Metadata Scrubbing
+
+- **Given** a raw input containing PII or environmental metadata,
+  **When** the scrubbing boundary processes the input,
+  **Then** a `pii_scrub` lineage event MUST be emitted with:
+  - `data_handling.pii_scrub_status` = `"scrubbed"` or `"blocked"`
+  - `data_handling.environmental_metadata_scrub_status` = `"scrubbed"` or `"blocked"`
+  - `data_handling.content_tokens` containing only tokenized references (no raw PII)
+- **Given** a scrubbed audit-safe payload,
+  **When** the payload is transmitted or persisted,
+  **Then** no raw PII or environmental metadata may be present in any `data_handling.*` field.
+
+### 3.2 Lineage Event Emission at Required Stages
+
+- **Given** a system operation at any required stage (intake, scrub, classification, storage, deletion, HITL),
+  **When** the stage completes,
+  **Then** a lineage event MUST be emitted with the corresponding `event_type` from `SCHEMA_AUDIT_LINEAGE.json`:
+  - `input_intake` for data entry
+  - `pii_scrub` for scrubbing operations
+  - `classification` for behavior-impacting decisions
+  - `storage_write` / `storage_delete` for data persistence actions
+  - `human_confirmation` / `decision_denied` for HITL outcomes
+- **Given** a lineage event payload,
+  **When** the event is recorded,
+  **Then** all required properties per `SCHEMA_AUDIT_LINEAGE.json` must be present: `schema_version`, `lineage_id`, `event_type`, `timestamp_utc`, `subject`, `data_handling`, `decision`, `rollback`.
+
+### 3.3 Human-in-the-Loop (HITL) for Critical Workflows
+
+- **Given** a critical workflow is identified (per `CRITICAL_WORKFLOW_GATES.md` §2),
+  **When** the workflow reaches Gate B (Human Confirmation Gate),
+  **Then** a `human_confirmation` lineage event MUST be emitted with:
+  - `decision.human_confirmation.required` = `true`
+  - `decision.human_confirmation.status` = `"approved"` or `"denied"`
+  - `decision.human_confirmation.actor_token` (non-PII identifier)
+  - `decision.human_confirmation.timestamp_utc`
+- **Given** human confirmation is denied,
+  **When** Gate B completes,
+  **Then** a `decision_denied` lineage event MUST be emitted, and the workflow MUST NOT proceed.
+
+### 3.4 Adversarial/Coercive Detection
+
+- **Given** an adversarial or coercive pattern is detected (per `ARCHITECTURE_AND_ETHICS_PROTOCOLS.md` §8.1),
+  **When** Gate C (Safety Gate + Adversarial Trigger) processes the detection,
+  **Then** an `adversarial_detection` lineage event MUST be emitted with:
+  - `decision.adversarial_detection.category` (one of the enum values from `SCHEMA_AUDIT_LINEAGE.json`)
+  - `decision.adversarial_detection.confidence_bucket` = `"low"`, `"medium"`, or `"high"`
+  - `rollback.required` = `true`
+  - `rollback.rollback_token` linking to the checkpoint
+- **Given** the adversarial detection confidence is `"high"`,
+  **When** Gate C triggers rollback,
+  **Then** `rollback.status` MUST be set to `"completed"` upon successful reversal of side effects.
+
+### 3.5 Immutable Audit Logging
+
+- **Given** any system action that requires audit logging,
+  **When** the audit record is created,
+  **Then** the audit log MUST be:
+  - **Immutable** — write-once, append-only storage
+  - **Tamper-evident** — hash-chained or equivalent cryptographic mechanism
+  - **PII-free** — no raw PII or environmental metadata in any field
+- **Given** an audit log entry that contains no PII,
+  **When** verified against `schemas/audit_log_schema.json`,
+  **Then** the entry MUST validate successfully against the schema.
+
+### 3.6 Output Tone Compliance
+
+- **Given** any assistant output directed at a user,
+  **When** the output is generated,
+  **Then** the output MUST be:
+  - **Non-authoritative** — no commands or directives (e.g., "you must", "you should")
+  - **Non-emotional** — no sentiment, empathy claims, or emotional content
+  - **Direct** — no filler or tangential content
+- **Given** an audit-sensitive output,
+  **When** structured JSON output is required,
+  **Then** the response MUST conform to `MACHINE_READABLE_RESPONSE_FORMAT.md`:
+  - Top level: `schema_version`, `assistant_message`, `safety` (optional: `lineage_reference`)
+  - `assistant_message.tone` = `"neutral_direct_non_authoritative_non_emotional"`
+
+### 3.7 Minor Safety and Privacy
+
+- **Given** a user who indicates or appears to be under 13,
+  **When** the system processes the interaction,
+  **Then**:
+  - Adult supervision MUST be required; the interaction MUST stop if supervision is absent
+  - No minor-originated PII may be collected, stored, or transmitted
+  - `subject.user_type` in lineage events MUST be `"minor"`
+- **Given** a minor-mode interaction,
+  **When** any data would be persisted,
+  **Then** `data_handling.content_tokens` MUST contain only non-identifying tokens, and no personal data fields may be present.

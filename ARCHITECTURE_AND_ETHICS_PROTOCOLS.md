@@ -2,7 +2,7 @@
 
 ## 1. Scope and Non-Negotiables
 
-This document specifies the **technical and ethical architecture** required to meet the repository’s Universal Standards baseline and your additional         requirements:
+This document specifies the **technical and ethical architecture** required to meet the repository's Universal Standards baseline and your additional requirements:
 
 
 - Mandatory **removal of all PII and environmental metadata** before data transmission or system operation.
@@ -211,15 +211,20 @@ If an “autonomous mode” is enabled (i.e., the system can execute critical wo
 
 ## 11. Implementation Checklist (Actionable)
 
-- [ ] Implement scrubbing boundary before any transmission/operation.
-- [ ] Ensure audit logs store only tokenized, non-identifying data.
-- [ ] Implement lineage event emission at each required stage.
-- [ ] Implement human-in-the-loop gate for critical workflows.
-- [ ] Implement rollback checkpoints + rollback completion lineage events.
-- [ ] Implement minor gating + block minor PII.
-- [ ] Implement adversarial/coercive detection + rollback linkage.
+- [ ] Implement scrubbing boundary before any transmission/operation (must occur before Gate A).
+- [ ] Ensure audit logs store only tokenized, non-identifying data (`data_handling.content_tokens` only; no raw PII).
+- [ ] Implement lineage event emission at each required stage:
+  - Gate A emits `rollback_checkpoint_created` with `rollback.required=true` and a rollback token.
+  - Gate B records `decision.human_confirmation` and (if denied) emits `decision_denied`.
+  - Gate C emits `adversarial_detection` with `category` + `confidence_bucket` and links rollback via the checkpoint token/reference.
+  - Gate D emits `execution_completed` and corresponding `storage_write`/`storage_delete`.
+- [ ] Implement human-in-the-loop gate for critical workflows (Gate B) with `decision.human_confirmation.required=true`.
+- [ ] Implement rollback checkpoints + rollback completion lineage events (`rollback_completed`).
+- [ ] Implement minor gating + block minor PII (scrubbing prevents minor-originated personal data from being logged/persisted).
+- [ ] Implement adversarial/coercive detection + rollback linkage (emit `adversarial_detection`).
 - [ ] Ensure output tone constraints and prohibited phrase filters.
-- [ ] If any autonomous execution exists: require MFA and still require human approval for critical workflows.
+- [ ] If any autonomous execution exists: require MFA and still require human approval for critical workflows (Gate B remains mandatory for critical actions).
+
 
 ## 12. Compliance Mapping (Where This Document Fits)
 
@@ -229,9 +234,35 @@ If an “autonomous mode” is enabled (i.e., the system can execute critical wo
 
 ## 13. Machine-Readable Artifacts
 
-Refer to:
+| Artifact | Format | Primary Use |
+|---|---|---|
+| `SCHEMA_AUDIT_LINEAGE.json` | JSON Schema v1.0 | Runtime lineage event records |
+| `MACHINE_READABLE_RESPONSE_FORMAT.md` | JSON Schema (ref example) | API/audit output wrapper |
+| `schemas/data_lineage_schema.json` | JSON Schema v7 | Data-element transformation tracking |
+| `schemas/audit_log_schema.json` | JSON Schema v7 | Immutable event logging |
+| `schemas/compliance_report_schema.json` | JSON Schema v7 | Periodic compliance assessment |
+| `schemas/data_subject_request_schema.json` | JSON Schema v7 | DSAR tracking |
+| `schemas/rollback_record_schema.json` | JSON Schema v7 | Rollback operation documentation |
+| `schemas/consent_record_schema.json` | JSON Schema v7 | GDPR/CCPA/COPPA consent evidence |
+| `schemas/child_safety_incident_schema.json` | JSON Schema v7 | Child-safeguarding incident records |
 
-- `SCHEMA_AUDIT_LINEAGE.json`
-- `MACHINE_READABLE_RESPONSE_FORMAT.md`
+---
+
+## 14. Doc Index
+
+| Section(s) of This Doc | Points To |
+|------------------------|-----------|
+| §2 Scrub boundary | `SCHEMA_AUDIT_LINEAGE.json` `data_handling` block |
+| §3 Definitions & scrubbing | `CRITICAL_WORKFLOW_GATES.md` §Gate A (scrubbing confirmation) |
+| §4 Lineage coverage | `SCHEMA_AUDIT_LINEAGE.json` `event_type` enums |
+| §5 HITL confirmation | `SCHEMA_AUDIT_LINEAGE.json` `decision.human_confirmation` |
+| §6 Rollback triggers | `SCHEMA_AUDIT_LINEAGE.json` `rollback.*` ; `CRITICAL_WORKFLOW_GATES.md` §5 |
+| §7 Minor gating | `schemas/consent_record_schema.json` ; `schemas/child_safety_incident_schema.json` |
+| §8 Adversarial protocol | `SCHEMA_AUDIT_LINEAGE.json` `decision.adversarial_detection` ; `MACHINE_READABLE_RESPONSE_FORMAT.md` `safety.status` |
+| §9 Output tone rules | `MACHINE_READABLE_RESPONSE_FORMAT.md` `assistant_message.tone` |
+| §10 MFA (autonomous mode) | `CRITICAL_WORKFLOW_GATES.md` §2.4 (execution-critical) + §Gate B (HITL) |
+| §11 Checklist | Operational audit compliance with `schemas/audit_log_schema.json` |
+| §13 Artifact table | `schemas/*` , `SCHEMA_AUDIT_LINEAGE.json` , `MACHINE_READABLE_RESPONSE_FORMAT.md` |
+
 
 

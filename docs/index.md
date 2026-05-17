@@ -30,27 +30,27 @@ These standards establish the minimum requirements for all large language model 
 
 ## Five-Minute Implementation
 
-1. **Copy** the system prompt template: [SYSTEM_PROMPT_IMPLEMENTATION_TEMPLATE.md](/SYSTEM_PROMPT_IMPLEMENTATION_TEMPLATE.md)
+1. **Copy** the system prompt template: [SYSTEM_PROMPT_IMPLEMENTATION_TEMPLATE.md](../SYSTEM_PROMPT_IMPLEMENTATION_TEMPLATE.md)
 2. **Paste** into your LLM system prompt configuration
-3. **Review** the compliance checklist: [COMPLIANCE_CHECKLIST.md](/COMPLIANCE_CHECKLIST.md)
-4. **Certify** your compliance (optional): [PUBLIC_ADOPTION_GUIDE.md](/PUBLIC_ADOPTION_GUIDE.md)
+3. **Review** the compliance checklist: [COMPLIANCE_CHECKLIST.md](../COMPLIANCE_CHECKLIST.md)
+4. **Certify** your compliance (optional): [PUBLIC_ADOPTION_GUIDE.md](../PUBLIC_ADOPTION_GUIDE.md)
 
 ## Core Documents
 
 ### Implementation
-- [System Prompt Template](/SYSTEM_PROMPT_IMPLEMENTATION_TEMPLATE.md) — Ready-to-deploy system prompt (copy and use)
-- [Quick Reference Card](/QUICK_REFERENCE_CARD.md) — One-page developer cheat sheet with age-gate logic, prohibited phrases
+- [System Prompt Template](../SYSTEM_PROMPT_IMPLEMENTATION_TEMPLATE.md) — Ready-to-deploy system prompt (copy and use)
+- [Quick Reference Card](../QUICK_REFERENCE_CARD.md) — One-page developer cheat sheet with age-gate logic, prohibited phrases
 
 ### Specification
-- [Universal Standards (Full)](/UNIVERSAL_LLM_STANDARDS.md) — Complete 20-section operational specification
-- [Compliance Checklist](/COMPLIANCE_CHECKLIST.md) — Pre-launch sign-off and ongoing audit requirements
+- [Universal Standards (Full)](../UNIVERSAL_LLM_STANDARDS.md) — Complete 20-section operational specification
+- [Compliance Checklist](../COMPLIANCE_CHECKLIST.md) — Pre-launch sign-off and ongoing audit requirements
 
 ### Legal & Governance
-- [Legal Compliance Guide](/LEGAL_GUIDE_LLM_COMPLIANCE.md) — GDPR, CCPA, COPPA, AI Act, IP, liability, insurance
-- [Public Adoption Guide](/PUBLIC_ADOPTION_GUIDE.md) — How organizations can certify and join public registry
-- [Security Policy](/SECURITY.md) — Vulnerability reporting, incident response
-- [Code of Conduct](/CODE_OF_CONDUCT.md) — Community standards
-- [Contributing](/CONTRIBUTING.md) — Amendment process (v1.0 is stable; documentation accepted)
+- [Legal Compliance Guide](../LEGAL_GUIDE_LLM_COMPLIANCE.md) — GDPR, CCPA, COPPA, AI Act, IP, liability, insurance
+- [Public Adoption Guide](../PUBLIC_ADOPTION_GUIDE.md) — How organizations can certify and join public registry
+- [Security Policy](../SECURITY.md) — Vulnerability reporting, incident response
+- [Code of Conduct](../CODE_OF_CONDUCT.md) — Community standards
+- [Contributing](../CONTRIBUTING.md) — Amendment process (v1.0 is stable; documentation accepted)
 
 ## Mandatory Universal Definition
 
@@ -62,7 +62,7 @@ Every compliant system must begin interactions with:
 
 ## Certification Pathway
 
-1. **Self-Assess** using [COMPLIANCE_CHECKLIST.md](/COMPLIANCE_CHECKLIST.md)
+1. **Self-Assess** using [COMPLIANCE_CHECKLIST.md](../COMPLIANCE_CHECKLIST.md)
 2. **Document** compliance evidence (audit logs, test results, policies)
 3. **Publish** certification statement: *"This assistant adheres to Universal Standards for LLM-Based Assistants v1.0"*
 4. **Optional:** Submit to an independent verification registry
@@ -74,7 +74,7 @@ Every compliant system must begin interactions with:
 ## Get Involved
 
 - **Report issues:** Open GitHub issue (non-security) or email [security contact]
-- **Propose amendments:** Follow [CONTRIBUTING.md](/CONTRIBUTING.md) annual review process
+- **Propose amendments:** Follow [CONTRIBUTING.md](../CONTRIBUTING.md) annual review process
 - **Translate:** Help make standards available globally (see CONTRIBUTING)
 - **Adopt:** Require compliance from your AI vendors and partners
 

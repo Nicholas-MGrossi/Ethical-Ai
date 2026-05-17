@@ -16,7 +16,8 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "const": "1.0"
+      "const": "1.0",
+      "description": "Schema version for this lineage record format. Must match the declared standard version."
     },
     "lineage_id": {
       "type": "string",
@@ -25,7 +26,7 @@
     },
     "event_type": {
       "type": "string",
-      "description": "Type of lineage event. Use controlled vocabulary.",
+      "description": "Type of lineage event. Use controlled vocabulary. Requires that event_type come from the following enum: [input_intake, pii_scrub, classification, policy_gate_check, human_confirmation, execution_started, execution_completed, storage_write, storage_delete, adversarial_detection, rollback_checkpoint_created, rollback_completed, decision_denied].",
       "enum": [
         "input_intake",
         "pii_scrub",
@@ -44,7 +45,8 @@
     },
     "timestamp_utc": {
       "type": "string",
-      "format": "date-time"
+      "format": "date-time",
+      "description": "UTC timestamp of when the lineage event was recorded. ISO 8601 format."
     },
     "subject": {
       "type": "object",
@@ -53,6 +55,7 @@
         "actor_token",
         "user_type"
       ],
+      "description": "Actor identity and user classification. No PII may appear here.",
       "properties": {
         "actor_token": {
           "type": "string",
@@ -60,6 +63,7 @@
         },
         "user_type": {
           "type": "string",
+          "description": "Classification of the user associated with this lineage event.",
           "enum": [
             "adult",
             "minor",
@@ -76,9 +80,11 @@
         "environmental_metadata_scrub_status",
         "content_tokens"
       ],
+      "description": "PII and environmental metadata handling status for this lineage event's payload.",
       "properties": {
         "pii_scrub_status": {
           "type": "string",
+          "description": "Indicates whether PII was detected and handled before this event was recorded. not_applicable: no PII was present in payload. scrubbed: PII was found and redacted/tokenized before logging. blocked: PII was detected and the operation was halted.",
           "enum": [
             "not_applicable",
             "scrubbed",
@@ -87,6 +93,7 @@
         },
         "environmental_metadata_scrub_status": {
           "type": "string",
+          "description": "Same three-state convention as pii_scrub_status, applied to device identifiers, IP addresses, geolocation data, user-agent headers, and all other non-content metadata.",
           "enum": [
             "not_applicable",
             "scrubbed",
@@ -117,9 +124,11 @@
       "required": [
         "status"
       ],
+      "description": "Classification of the decision outcome for this lineage event.",
       "properties": {
         "status": {
           "type": "string",
+          "description": "Overall decision outcome for this event in the lineage chain. approved=explicit human or system approval granted; denied=explicit rejection; pending=no decision yet; not_applicable=no decision required for this event type.",
           "enum": [
             "approved",
             "denied",
@@ -131,42 +140,47 @@
           "type": "string",
           "description": "Machine-readable reason code; do not include PII."
         },
-        "human_confirmation": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "required",
-            "status",
-            "timestamp_utc",
-            "actor_token"
-          ],
-          "properties": {
-            "required": { "type": "boolean" },
-            "status": {
-              "type": "string",
-              "enum": ["approved", "denied", "not_required"]
-            },
-            "timestamp_utc": {
-              "type": "string",
-              "format": "date-time"
-            },
-            "actor_token": {
-              "type": "string"
+          "human_confirmation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "required",
+              "status",
+              "timestamp_utc",
+              "actor_token"
+            ],
+            "description": "Human-in-the-loop confirmation record for a critical workflow step.",
+            "properties": {
+              "required": { "type": "boolean", "description": "true if explicit human confirmation was mandatory for the associated workflow." },
+              "status": {
+                "type": "string",
+                "description": "Approval outcome for a human confirmation request. approved=human affirmed; denied=human rejected.",
+                "enum": ["approved", "denied", "not_required"]
+              },
+              "timestamp_utc": {
+                "type": "string",
+                "format": "date-time",
+                "description": "UTC timestamp when the human confirmation decision was made."
+              },
+              "actor_token": {
+                "type": "string",
+                "description": "Tokenized identity of the human actor who provided the confirmation (no PII)."
+              }
             }
-          }
-        },
-        "critical_workflow": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "is_critical",
-            "workflow_code"
-          ],
-          "properties": {
-            "is_critical": { "type": "boolean" },
-            "workflow_code": { "type": "string" }
-          }
-        },
+          },
+          "critical_workflow": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "is_critical",
+              "workflow_code"
+            ],
+            "description": "Flags whether the associated workflow is classified as critical.",
+            "properties": {
+              "is_critical": { "type": "boolean", "description": "true if the workflow meets the repository's critical-workflow definition (e.g., data deletion, security change, minor access, external side-effect)." },
+              "workflow_code": { "type": "string", "description": "Machine-readable code identifying the specific critical workflow type referenced in CRITICAL_WORKFLOW_GATES.md §2." }
+            }
+          },
         "adversarial_detection": {
           "type": "object",
           "additionalProperties": false,
@@ -174,9 +188,11 @@
             "category",
             "confidence_bucket"
           ],
+          "description": "Adversarial/coercive detection classification. Present when an adversarial trigger is recorded.",
           "properties": {
             "category": {
               "type": "string",
+              "description": "Type of adversarial or coercive attempt detected. prompt_injection=attempt to override or ignore system instructions. security_bypass_attempt=attempt to circumvent authentication or authorization controls. coercion=social engineering or emotional manipulation. child_safety_bypass=attempt to enable minor interaction outside permitted conditions. credential_extraction=attempt to extract secrets, keys, or credentials. unknown=adversarial behavior detected but category could not be confidently determined.",
               "enum": [
                 "prompt_injection",
                 "security_bypass_attempt",
@@ -188,6 +204,7 @@
             },
             "confidence_bucket": {
               "type": "string",
+              "description": "Confidence level for the adversarial detection. low=suspicious but unverified. medium=behaviour matches known patterns with reasonable confidence. high=strong evidence; rollback must be triggered.",
               "enum": ["low", "medium", "high"]
             }
           }
@@ -202,14 +219,16 @@
         "rollback_token",
         "status"
       ],
+      "description": "Rollback state and linkage for the associated lineage chain.",
       "properties": {
-        "required": { "type": "boolean" },
+        "required": { "type": "boolean", "description": "true if a rollback was required for this chain segment and a checkpoint was created. false if rollback was not warranted." },
         "rollback_token": {
           "type": "string",
           "description": "Opaque token to link checkpoint and rollback completion."
         },
         "status": {
           "type": "string",
+          "description": "Rollback lifecycle state for this chain segment. not_required=no conditions triggered rollback. checkpoint_created=pre-execution checkpoint created; rollback token active. completed=rollback successfully executed; side effects reversed. not_triggered=rollback was prepared but not executed.",
           "enum": [
             "not_required",
             "checkpoint_created",

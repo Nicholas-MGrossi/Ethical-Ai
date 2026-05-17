@@ -28,7 +28,7 @@ Instead, the framework treats negligent or boundary-crossing behavior as a desig
 - continuous testing and incident response.
 
 ## 3. Governance Model: One Framework, Multiple Policy Layers
-## 3. Governance Model: One Framework, Multiple Policy Layers
+
 ### 3.1 Policy layers (conceptual)
 The governance model is expressed in four conceptual layers:
 1. **Border layer**: controls for intake boundaries (risk categorization, abuse prevention, initial gating).
@@ -63,7 +63,11 @@ Alignment areas include:
 Alignment areas include:
 - standardized security baselines,
 - documented controls and assessment artifacts,
-- continuous monitoring and incident response discipline.> Note: This document does not claim legal equivalence. Implementers should perform jurisdiction-specific legal review.## 5. Control-to-Governance Mapping (implementation accountability)
+- continuous monitoring and incident response discipline.
+
+> **Note:** This document does not claim legal equivalence. Implementers should perform jurisdiction-specific legal review.
+
+## 5. Control-to-Governance Mapping (implementation accountability)
 The following mapping links governance responsibilities to the repository’s technical requirements.
 
 ### 5.1 Safety & human oversight

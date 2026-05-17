@@ -1,0 +1,59 @@
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:3. **Normalization & Classification** (non-identifying)
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:- Every classification decision that impacts behavior
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:  - `human_confirmation.status` (approved/denied)
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:  - `human_confirmation.timestamp`
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:  - `human_confirmation.actor_token` (non-PII)
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:- Emit lineage event `adversarial_detection` with:
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:  - Gate A emits `rollback_checkpoint_created` with `rollback.required=true` and a rollback token.
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:  - Gate B records `decision.human_confirmation` and (if denied) emits `decision_denied`.
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:  - Gate C emits `adversarial_detection` with `category` + `confidence_bucket` and links rollback via the checkpoint token/reference.
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:  - Gate D emits `execution_completed` and corresponding `storage_write`/`storage_delete`.
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:- [ ] Implement human-in-the-loop gate for critical workflows (Gate B) with `decision.human_confirmation.required=true`.
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:- [ ] Implement rollback checkpoints + rollback completion lineage events (`rollback_completed`).
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:- [ ] Implement adversarial/coercive detection + rollback linkage (emit `adversarial_detection`).
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:| §5 HITL confirmation | `SCHEMA_AUDIT_LINEAGE.json` `decision.human_confirmation` |
+ARCHITECTURE_AND_ETHICS_PROTOCOLS.md:| §8 Adversarial protocol | `SCHEMA_AUDIT_LINEAGE.json` `decision.adversarial_detection` ; `MACHINE_READABLE_RESPONSE_FORMAT.md` `safety.status` |
+CRITICAL_WORKFLOW_GATES.md:- Emit a `rollback_checkpoint_created` lineage event.
+CRITICAL_WORKFLOW_GATES.md:- Require `decision.human_confirmation` in lineage (audit-safe fields).
+CRITICAL_WORKFLOW_GATES.md:  - Emit `decision_denied` lineage event.
+CRITICAL_WORKFLOW_GATES.md:- Emit `adversarial_detection` lineage event.
+CRITICAL_WORKFLOW_GATES.md:- Emit `execution_completed`.
+CRITICAL_WORKFLOW_GATES.md:- Emit `storage_write` and/or `storage_delete` for related operations.
+CRITICAL_WORKFLOW_GATES.md:| A (Checkpoint) | `rollback_checkpoint_created` | `rollback.required=true`, include `rollback.rollback_token`; ensure scrubbing boundary occurred (PII must not be present in logged content). |
+CRITICAL_WORKFLOW_GATES.md:| B (Human confirmation) | `human_confirmation` (as part of `decision.human_confirmation`) and/or `decision_denied` | When critical: `decision.human_confirmation.required=true`; status is `approved` or `denied`; record `decision.human_confirmation.actor_token` and `timestamp_utc`. |
+CRITICAL_WORKFLOW_GATES.md:| C (Adversarial trigger) | `adversarial_detection` | Include `adversarial_detection.category` and `adversarial_detection.confidence_bucket`; rollback should be linked via the rollback token/checkpoint reference. |
+CRITICAL_WORKFLOW_GATES.md:| D (Completion) | `execution_completed` (+ `storage_write`/`storage_delete`) | Emit storage events only for related operations; do not include raw PII in `data_handling.content_tokens`. |
+CRITICAL_WORKFLOW_GATES.md:- Emit `rollback_completed` lineage event.
+CRITICAL_WORKFLOW_GATES.md:- “Critical workflow” classification must be deterministic and consistent.
+CRITICAL_WORKFLOW_GATES.md:| `SCHEMA_AUDIT_LINEAGE.json` | §3 (Gate A/B/C/D table), §4 (human_confirmation fields), §5 (rollback status enums) |
+LEGAL_GUIDE_LLM_COMPLIANCE.md:- FDA regulations – Medical device classification potential
+LEGAL_GUIDE_LLM_COMPLIANCE.md:- Incident classification taxonomy (severity levels)
+SECURITY.md:Severity classification:
+SKILL_MATRIX.md:  - Intent classification and faceted filtering operate on scrubbed/non-identifying data
+SKILL_MATRIX.md:  - Deterministic classification of critical workflows
+SKILL_MATRIX.md:  - Ensure critical workflow classification is deterministic and consistent
+SKILL_MATRIX.md:  - If adversarial triggers fire, block progression and emit `adversarial_detection`
+SKILL_MATRIX.md:- [ ] Emit lineage events at required stages (intake, scrub, classification, storage, deletion, HITL)
+TECHNICAL_ETHICAL_ARCHITECTURE.md:      "name": "pii_scrubbing",
+TECHNICAL_ETHICAL_ARCHITECTURE.md:      "active_guardrails": ["sentient_language", "child_safety", "pii_scrubbing"]
+SCHEMA_AUDIT_LINEAGE.json:      "description": "Type of lineage event. Use controlled vocabulary. Requires that event_type come from the following enum: [input_intake, pii_scrub, classification, policy_gate_check, human_confirmation, execution_started, execution_completed, storage_write, storage_delete, adversarial_detection, rollback_checkpoint_created, rollback_completed, decision_denied].",
+SCHEMA_AUDIT_LINEAGE.json:        "input_intake",
+SCHEMA_AUDIT_LINEAGE.json:        "pii_scrub",
+SCHEMA_AUDIT_LINEAGE.json:        "classification",
+SCHEMA_AUDIT_LINEAGE.json:        "policy_gate_check",
+SCHEMA_AUDIT_LINEAGE.json:        "human_confirmation",
+SCHEMA_AUDIT_LINEAGE.json:        "execution_started",
+SCHEMA_AUDIT_LINEAGE.json:        "execution_completed",
+SCHEMA_AUDIT_LINEAGE.json:        "storage_write",
+SCHEMA_AUDIT_LINEAGE.json:        "storage_delete",
+SCHEMA_AUDIT_LINEAGE.json:        "adversarial_detection",
+SCHEMA_AUDIT_LINEAGE.json:        "rollback_checkpoint_created",
+SCHEMA_AUDIT_LINEAGE.json:        "rollback_completed",
+SCHEMA_AUDIT_LINEAGE.json:        "decision_denied"
+SCHEMA_AUDIT_LINEAGE.json:      "description": "Actor identity and user classification. No PII may appear here.",
+SCHEMA_AUDIT_LINEAGE.json:          "description": "Classification of the user associated with this lineage event.",
+SCHEMA_AUDIT_LINEAGE.json:        "pii_scrub_status",
+SCHEMA_AUDIT_LINEAGE.json:        "pii_scrub_status": {
+SCHEMA_AUDIT_LINEAGE.json:          "description": "Same three-state convention as pii_scrub_status, applied to device identifiers, IP addresses, geolocation data, user-agent headers, and all other non-content metadata.",
+SCHEMA_AUDIT_LINEAGE.json:        "human_confirmation": {
+SCHEMA_AUDIT_LINEAGE.json:        "adversarial_detection": {

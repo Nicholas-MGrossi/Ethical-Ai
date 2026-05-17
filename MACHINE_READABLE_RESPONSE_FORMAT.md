@@ -21,6 +21,8 @@ The assistant MUST output a JSON object with the following top-level fields:
 ### 2.2 `safety` (required)
 - Indicates whether content passed safety gates.
 - Must be audit-safe.
+- `status` values are controlled by the JSON Schema in §4 (e.g., `passed`, `blocked`, `requires_human_review`).
+
 
 ### 2.3 `lineage_reference` (optional)
 - Opaque token linking to lineage records.
@@ -96,6 +98,7 @@ If you require validation, use the following schema:
 }
 ```
 
+
 ## 5. Prohibited Content in `assistant_message.text`
 
 - Claims of consciousness, emotions, intentions, understanding, or personal agency.
@@ -107,4 +110,15 @@ If you require validation, use the following schema:
 
 - Use this wrapper for audit-sensitive responses or when your system requires machine-readable interoperability.
 - For ordinary user-facing responses, you may render `assistant_message.text` as plain text, but must preserve the tone constraints.
+
+---
+
+## 7. Doc Index
+
+| Referenced Artifact | Section(s) That Point to It |
+|---------------------|----------------------------|
+| `SCHEMA_AUDIT_LINEAGE.json` | — (lineage reference token in §2.3) |
+| `ARCHITECTURE_AND_ETHICS_PROTOCOLS.md` | §9.2 |
+| `CRITICAL_WORKFLOW_GATES.md` | Gate D (§3.4) |
+
 
